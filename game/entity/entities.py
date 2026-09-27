@@ -1,16 +1,24 @@
-import pygame
-from pygame.sprite import Sprite, Group
+from game.gamelayer import GameObject
 
+for_render = []
 
-class Ship(Sprite):
-    def __init__(self, x = 50, y = 50):
-        super().__init__()
+class Entity(GameObject):
+    def __init__(self, image, pos, dimensions = (1, 1)):
+        super().__init__(image, pos, dimensions)
+        for_render.append(self)
 
-        self.image = pygame.image.load("assets/ship.png").convert_alpha()
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
+    def set_pos(self, pos):
+        self.pos = pos
 
-def get_group() -> Group:
-    group = Group()
-    group.add(Ship())
-    return group
+    def move(self, displacement):
+        self.pos[0] += displacement[0]
+        self.pos[1] += displacement[1]
+
+class Ship(Entity):
+    def __init__(self, pos=(0, 0)):
+        super().__init__("ship.png", pos)
+
+SHIP = Ship()
+
+def get_for_render() -> list[GameObject]:
+    return for_render
