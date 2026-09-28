@@ -19,3 +19,5 @@ def handle_event(event):
     if event.type in registered_events:
         for func in registered_events[event.type]:
             func(event)
+        return True
+    return False

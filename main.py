@@ -2,6 +2,7 @@ import pygame
 import pygame_gui
 
 import config
+import input
 import renderer
 from ui import ui
 
@@ -20,10 +21,18 @@ running = True
 while running:
     time_delta = clock.tick(60)/1000
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-        ui.handle_event(event)
+        if not ui.handle_event(event):
+            match event.type:
+                case pygame.QUIT:
+                    running = False
+                case pygame.MOUSEBUTTONDOWN:
+                    input.mouse.button_down(event)
+                case pygame.MOUSEBUTTONUP:
+                    input.mouse.button_up(event)
+                case pygame.MOUSEMOTION:
+                    input.mouse.motion(event)
+                case pygame.MOUSEWHEEL:
+                    input.mouse.wheel(event)
 
         ui_manager.process_events(event)
 

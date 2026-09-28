@@ -1,4 +1,4 @@
-from game.gamelayer import GameObject
+from core.gamelayer import GameObject
 
 for_render = []
 
