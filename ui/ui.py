@@ -7,14 +7,12 @@ import renderer
 registered_events = {}
 
 
-def on_add_button_pressed(event,manager):
+def on_add_button_pressed(event, manager):
     scroll_x = renderer.scroll_x
     scroll_y = renderer.scroll_y
-    #pi = pygame_gui.ui_manager.IWindowInterface
+    pi = pygame_gui.elements
     jhg = pygame_gui.elements.UIWindow(rect=pygame.Rect((300, 100), (100, 100)), manager=manager,draggable=True,resizable=True,)
-    hello_button = pygame_gui.elements.UITextEntryBox(relative_rect=pygame.Rect((scroll_x, scroll_y), (250, 50)),manager=manager)
-
-
+    hello_button = pygame_gui.elements.UITextEntryBox(relative_rect=pygame.Rect((scroll_x, scroll_y), (250, 50)), manager=manager)
 
 class Button:
     def __init__(self, relative_rect, text, object_id, manager, func=None):
@@ -23,9 +21,9 @@ class Button:
         register_event(pygame_gui.UI_BUTTON_PRESSED, self)
 
 
-def init(manager):
-    Button(relative_rect=pygame.Rect((0, 0), (50, 50)), text="", object_id="#add_button", manager=manager, func=lambda event: on_add_button_pressed(event, manager))
-    Button(relative_rect=pygame.Rect((0, 100), (100, 100)), text="", object_id="#test2button", manager=manager)
+def init(ui_manager, win_manager):
+    Button(relative_rect=pygame.Rect((0, 0), (50, 50)), text="", object_id="#add_button", manager=ui_manager, func=lambda event: on_add_button_pressed(event, win_manager))
+    Button(relative_rect=pygame.Rect((0, 100), (100, 100)), text="", object_id="#test2button", manager=ui_manager)
 
 
 def register_event(event_id, but):
