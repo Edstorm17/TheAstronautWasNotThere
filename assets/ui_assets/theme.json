@@ -16,11 +16,11 @@
     "images": {
       "normal_image": {
         "package": "",
-        "path": "assets/add_normal.png"
+        "path": "assets/ui_assets/add_normal.png"
       },
       "hovered_image": {
         "package": "",
-        "path": "assets/add_hovered.png"
+        "path": "assets/ui_assets/add_hovered.png"
       }
     }
   }
