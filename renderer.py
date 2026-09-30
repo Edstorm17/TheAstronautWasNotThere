@@ -53,7 +53,7 @@ def draw_game_layer(screen):
         screen.blit(img, rect)
 
     def draw_ground(size):
-        raw_image = pygame.image.load("assets/ground.png")
+        raw_image = pygame.image.load("assets/world_assets/ground.png")
         ground_image = pygame.transform.scale(raw_image, (TILE_SIZE, TILE_SIZE))
 
         for row in range(size):
