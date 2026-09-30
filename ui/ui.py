@@ -1,11 +1,13 @@
 import pygame
 import pygame_gui
 
-registered_events = {}
+from core.entity import entities
 
+registered_events = {}
 def init(manager):
     add_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((0, 0), (50, 50)), text="", object_id="#add_button", manager=manager)
     def on_add_button_pressed(event):
+        #entities.spawn()
         print("add_button_pressed")
     register_event(pygame_gui.UI_BUTTON_PRESSED, on_add_button_pressed)
 
