@@ -19,20 +19,16 @@ class Entity(GameObject):
 class Ship(Entity):
     def __init__(self, pos=(0, 0)):
         super().__init__("ship.png", pos)
-    def get_level(self):
-        ...
 
-        # malik -> TreeUpgrade = get_ship_level()
-        # return TreeUpgrade
 
 
 class Rock(Entity):
     def __init__(self, pos=(0, 0)):
         super().__init__("rock.jpg", pos)
+        self.hardness = random.randint(1, 10)
+        self.type =  random.randint(1, 2)
+        self.state = [0,1,2]
 
-    def hardness(self):
-        hardness = random.randint(1, 10)
-        return hardness
 
 
 
@@ -40,10 +36,11 @@ class Rock(Entity):
 class Wall(Entity):
     def __init__(self, pos=(0, 0)):
         super().__init__("wall.png", pos)
+        self.hardness = random.randint(1, 10)
+        self.type = random.randint(1, 2)
 
-    def hardness(self):
-        hardness = random.randint(1, 10)
-        return hardness
+
+
 
 
 
