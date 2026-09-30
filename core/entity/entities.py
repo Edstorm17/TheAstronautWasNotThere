@@ -3,7 +3,6 @@ import random
 from core.gamelayer import GameObject
 
 for_render = []
-ships = []
 states = ["fresh", "crackled", "destroyed"]
 types = ["hardened", "softened", "crackled"]
 
@@ -13,23 +12,22 @@ class Entity(GameObject):
         super().__init__(image, pos, dimensions)
         for_render.append(self)
 
-    def pos(self):
-        return self.pos
     def set_pos(self, pos):
         self.pos = pos
+
     def move(self, displacement):
         self.pos[0] += displacement[0]
         self.pos[1] += displacement[1]
 
 class Ship(Entity):
     def __init__(self, pos=(1, 0)):
-        super(Entity, self).__init__("ship.png", pos, dimensions=(1, 1))
-        ships.append(self)
+        super().__init__("ship.png", pos)
 
         self.state = states[random.randint(0, 2)]
         self.type = types[random.randint(0, 2)]
         self.hardness = random.randint(1, 10)
-
+    def pos(self):
+        return self.pos
     def state(self):
         return self.state
     def type(self):
@@ -46,6 +44,8 @@ class Rock(Entity):
         self.state = states[random.randint(0,2)]
         self.type = types[random.randint(0, 2)]
         self.hardness = random.randint(1, 10)
+    def pos(self):
+        return self.pos
     def state(self):
         return self.state
     def type(self):
@@ -60,6 +60,8 @@ class Wall(Entity):
         self.state = states[random.randint(0,2)]
         self.type = types[random.randint(0, 2)]
         self.hardness = random.randint(1, 10)
+    def pos(self):
+        return self.pos
     def state(self):
         return self.state
     def type(self):
@@ -74,15 +76,28 @@ class Press(Entity):
         self.state = states[random.randint(0, 2)]
     def compact(self, state):
         return state + self.compacting_power
+    def pos(self):
+        return self.pos
     def state(self):
         return self.state
-
-
+class Drill(Entity):
+    def __init__(self, pos=(5, 0)):
+        super().__init__("drill.png", pos)
+        self.state = states[random.randint(0, 2)]
+        self.type = types[random.randint(0, 2)]
+class Bomb(Entity):
+    def __init__(self, pos=(5, 1)):
+        super().__init__("bomb.png", pos)
+        self.state = states[random.randint(0, 2)]
+        self.type = types[random.randint(0, 2)]
+        self.hardness = random.randint(1, 10)
+BOMB = Bomb()
 SHIP = Ship()
 ROCK = Rock()
 WALL = Wall()
 PRESS = Press()
+DRILL = Drill(pos=(6, 0))
 
 
 def get_for_render() -> list[GameObject]:
-    return for_render + ships
+    return for_render
