@@ -21,7 +21,7 @@ class Entity(GameObject):
         self.pos[1] += displacement[1]
 
 class Ship(Entity):
-    def __init__(self, pos=(0, 0)):
+    def __init__(self, pos=(1, 0)):
         super().__init__("ship.png", pos)
 
         self.state = states[random.randint(0, 2)]
@@ -38,7 +38,7 @@ class Ship(Entity):
 #rocks have 3 states: fresh, crackled, destroyed
 #the player can get the rock position and type, the type deetermines the hardness of the rock
 class Rock(Entity):
-    def __init__(self, pos=(0, 0)):
+    def __init__(self, pos=(2, 0)):
         super().__init__("rock.png", pos)
 
         self.state = states[random.randint(0,2)]
@@ -52,7 +52,7 @@ class Rock(Entity):
         return self.hardness
 
 class Wall(Entity):
-    def __init__(self, pos=(0, 0)):
+    def __init__(self, pos=(3, 0)):
         super().__init__("wall.png", pos)
 
         self.state = states[random.randint(0,2)]
@@ -66,7 +66,7 @@ class Wall(Entity):
         return self.hardness
 
 class Press(Entity):
-    def __init__(self, pos=(0, 0)):
+    def __init__(self, pos=(4, 0)):
         super().__init__("press.png", pos)
         self.compacting_power = 1
         self.state = states[random.randint(0, 2)]
