@@ -9,26 +9,40 @@ class Mouse:
         self.displacement = (0, 0)
         self.mousewheel = (0, 0)
 
-    def button_down(self, event):
-        match event.button:
+    def button_down(self, pos, button, touch):
+        match button:
             case 1 | 2 | 3:
-                self.buttons_down[event.button-1] = True
+                self.buttons_down[button-1] = True
             case 4:
-                renderer.zoom(1, event.pos)
+                renderer.zoom(1, pos)
             case 5:
-                renderer.zoom(-1, event.pos)
+                renderer.zoom(-1, pos)
 
-    def button_up(self, event):
-        if event.button <= 3:
-            self.buttons_down[event.button-1] = False
+    def button_up(self, pos, button, touch):
+        if button <= 3:
+            self.buttons_down[button-1] = False
 
-    def motion(self, event):
-        self.displacement = event.rel
+    def motion(self, pos, rel, buttons, touch):
+        self.displacement = rel
 
-        if event.buttons[0]:
-            renderer.scroll(event.rel)
+        if buttons[0]:
+            renderer.scroll(rel)
 
-    def wheel(self, event):
-        self.mousewheel = (event.x, event.y)
+    # def wheel(self, event):
+    #     self.mousewheel = (event.x, event.y)
+
+class Keyboard:
+    def __init__(self):
+        self.keys_down = {}
+
+    def key_down(self, key, mod, unicode, scancode):
+        self.keys_down[key] = True
+
+    def key_up(self, key, mod, unicode, scancode):
+        self.keys_down[key] = False
+
+    def get_key_state(self, key):
+        return self.keys_down.get(key, False)
 
 mouse = Mouse()
+keyboard = Keyboard()
