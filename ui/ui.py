@@ -10,9 +10,9 @@ registered_events = {}
 def on_add_button_pressed(event,manager):
     scroll_x = renderer.scroll_x
     scroll_y = renderer.scroll_y
-    pi = pygame_gui.elements
+    #pi = pygame_gui.ui_manager.IWindowInterface
     jhg = pygame_gui.elements.UIWindow(rect=pygame.Rect((300, 100), (100, 100)), manager=manager,draggable=True,resizable=True,)
-    hello_button = pygame_gui.elements.UITextEntryBox(relative_rect=pygame.Rect((scroll_x, scroll_y), (250, 50)),manager=jhg)
+    hello_button = pygame_gui.elements.UITextEntryBox(relative_rect=pygame.Rect((scroll_x, scroll_y), (250, 50)),manager=manager)
 
 
 
