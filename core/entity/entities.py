@@ -3,6 +3,7 @@ import random
 from core.gamelayer import GameObject
 
 for_render = []
+ships = []
 states = ["fresh", "crackled", "destroyed"]
 types = ["hardened", "softened", "crackled"]
 
@@ -22,7 +23,8 @@ class Entity(GameObject):
 
 class Ship(Entity):
     def __init__(self, pos=(1, 0)):
-        super().__init__("ship.png", pos)
+        super(Entity, self).__init__("ship.png", pos, dimensions=(1, 1))
+        ships.append(self)
 
         self.state = states[random.randint(0, 2)]
         self.type = types[random.randint(0, 2)]
@@ -83,4 +85,4 @@ PRESS = Press()
 
 
 def get_for_render() -> list[GameObject]:
-    return for_render
+    return for_render + ships
