@@ -11,7 +11,7 @@ pygame.display.set_caption(config.TITLE)
 
 screen = pygame.display.set_mode(config.WINDOW_SIZE)
 clock = pygame.time.Clock()
-ui_manager = pygame_gui.UIManager(config.WINDOW_SIZE, theme_path="ui/theme.json")
+ui_manager = pygame_gui.UIManager(config.WINDOW_SIZE, theme_path="assets/ui_assets/theme.json")
 
 renderer.init(screen)
 ui.init(ui_manager)

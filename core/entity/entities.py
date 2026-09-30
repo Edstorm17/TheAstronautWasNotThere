@@ -69,7 +69,6 @@ class Press(Entity):
 
 
 
-
 SHIP = Ship()
 ROCK = Rock()
 WALL = Wall()
