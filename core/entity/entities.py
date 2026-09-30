@@ -12,9 +12,10 @@ class Entity(GameObject):
         super().__init__(image, pos, dimensions)
         for_render.append(self)
 
+    def pos(self):
+        return self.pos
     def set_pos(self, pos):
         self.pos = pos
-
     def move(self, displacement):
         self.pos[0] += displacement[0]
         self.pos[1] += displacement[1]
@@ -26,8 +27,7 @@ class Ship(Entity):
         self.state = states[random.randint(0, 2)]
         self.type = types[random.randint(0, 2)]
         self.hardness = random.randint(1, 10)
-    def pos(self):
-        return self.pos
+
     def state(self):
         return self.state
     def type(self):
@@ -44,8 +44,6 @@ class Rock(Entity):
         self.state = states[random.randint(0,2)]
         self.type = types[random.randint(0, 2)]
         self.hardness = random.randint(1, 10)
-    def pos(self):
-        return self.pos
     def state(self):
         return self.state
     def type(self):
@@ -60,8 +58,6 @@ class Wall(Entity):
         self.state = states[random.randint(0,2)]
         self.type = types[random.randint(0, 2)]
         self.hardness = random.randint(1, 10)
-    def pos(self):
-        return self.pos
     def state(self):
         return self.state
     def type(self):
@@ -76,18 +72,8 @@ class Press(Entity):
         self.state = states[random.randint(0, 2)]
     def compact(self, state):
         return state + self.compacting_power
-    def pos(self):
-        return self.pos
     def state(self):
         return self.state
-
-
-
-
-
-
-
-
 
 
 SHIP = Ship()
