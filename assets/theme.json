@@ -1,0 +1,27 @@
+{
+  "#add_button": {
+    "colours": {
+      "normal_bg": "#00000000",
+      "hovered_bg": "#00000000",
+      "active_bg": "#00000000",
+      "normal_border": "#00000000",
+      "hovered_border": "#00000000"
+    },
+    "misc": {
+      "shape": "rectangle",
+      "border_width": "0",
+      "shadow_width": "0",
+      "hovered_border_width": "0"
+    },
+    "images": {
+      "normal_image": {
+        "package": "",
+        "path": "assets/add_normal.png"
+      },
+      "hovered_image": {
+        "package": "",
+        "path": "assets/add_hovered.png"
+      }
+    }
+  }
+}
