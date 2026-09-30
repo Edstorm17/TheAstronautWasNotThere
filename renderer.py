@@ -40,10 +40,13 @@ def draw_background(screen):
 
 def draw_game_layer(screen):
     def draw_obj_gl(img, pos, dimensions):
-        x = pos[0]*TILE_SIZE
-        y = pos[1]*TILE_SIZE
+        rect = img.get_rect()
 
-        screen.blit(img, (x, y))
+        x = pos[0]*TILE_SIZE
+        y = screen.get_height()-pos[1]*TILE_SIZE
+        rect.bottomleft = (x, y)
+
+        screen.blit(img, rect.topleft)
 
     def draw_ground(size):
         raw_image = pygame.image.load("assets/ground.png")

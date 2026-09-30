@@ -26,13 +26,15 @@ while running:
                 case pygame.QUIT:
                     running = False
                 case pygame.MOUSEBUTTONDOWN:
-                    input.mouse.button_down(event)
+                    input.mouse.button_down(event.pos, event.button, event.touch)
                 case pygame.MOUSEBUTTONUP:
-                    input.mouse.button_up(event)
+                    input.mouse.button_up(event.pos, event.button, event.touch)
                 case pygame.MOUSEMOTION:
-                    input.mouse.motion(event)
-                case pygame.MOUSEWHEEL:
-                    input.mouse.wheel(event)
+                    input.mouse.motion(event.pos, event.rel, event.buttons, event.touch)
+                case pygame.KEYDOWN:
+                    input.keyboard.key_down(event.key, event.mod, event.unicode, event.scancode)
+                case pygame.KEYUP:
+                    input.keyboard.key_up(event.key, event.mod, event.unicode, event.scancode)
 
         ui_manager.process_events(event)
 
