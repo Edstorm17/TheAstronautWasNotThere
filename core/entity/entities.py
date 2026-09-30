@@ -5,7 +5,7 @@ from core.gamelayer import GameObject
 for_render = []
 
 class Entity(GameObject):
-    def __init__(self, image, pos, dimensions = (1, 1)):
+    def __init__(self, image, pos, dimensions=(1, 1)):
         super().__init__(image, pos, dimensions)
         for_render.append(self)
 
