@@ -91,12 +91,13 @@ class Bomb(Entity):
         self.state = states[random.randint(0, 2)]
         self.type = types[random.randint(0, 2)]
         self.hardness = random.randint(1, 10)
+
 BOMB = Bomb()
 SHIP = Ship()
 ROCK = Rock()
 WALL = Wall()
 PRESS = Press()
-DRILL = Drill(pos=(6, 0))
+DRILL = Drill()
 
 
 def get_for_render() -> list[GameObject]:
