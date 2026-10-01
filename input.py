@@ -32,9 +32,6 @@ class Mouse:
         if buttons[0]:
             renderer.scroll(rel)
 
-    # def wheel(self, event):
-    #     self.mousewheel = (event.x, event.y)
-
 class Keyboard:
     def __init__(self):
         self.keys_down = {}
