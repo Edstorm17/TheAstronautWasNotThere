@@ -63,7 +63,7 @@ def draw_game_layer(screen):
     draw_ground(config.map_size)
 
     for entity in entities.get_for_render():
-        draw_obj_gl(entity.image, entity.pos, entity.dimensions)
+        draw_obj_gl(entity.image, entity.get_pos(), entity.dimensions)
 
 def draw_ui_layer(screen):
     def draw_item(index, item):

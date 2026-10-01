@@ -1,5 +1,7 @@
 from random import random
 import random
+
+import config
 from core.gamelayer import GameObject
 
 for_render = []
@@ -12,12 +14,9 @@ class Entity(GameObject):
         super().__init__(image, pos, dimensions)
         for_render.append(self)
 
-    def set_pos(self, pos):
-        self.pos = pos
-
     def move(self, displacement):
-        self.pos[0] += displacement[0]
-        self.pos[1] += displacement[1]
+        self.x = min(max(self.x + displacement[0], 0), config.map_size-1)
+        self.y = min(max(self.y + displacement[1], 0), config.map_size-1)
 
 class Ship(Entity):
     def __init__(self, pos=(1, 0)):
@@ -100,5 +99,5 @@ PRESS = Press()
 DRILL = Drill()
 
 
-def get_for_render() -> list[GameObject]:
+def get_for_render() -> list[Entity]:
     return for_render
