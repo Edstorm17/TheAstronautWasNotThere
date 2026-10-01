@@ -40,7 +40,7 @@ def zoom(amount, zoom_center):
     scroll_x = zoom_center[0] - ((zoom_center[0]-scroll_x)/zoom_factor)*new_zoom_factor
     scroll_y = zoom_center[1] - ((zoom_center[1]-scroll_y)/zoom_factor)*new_zoom_factor
     zoom_factor = new_zoom_factor
-    ui.update_moving_elements((scroll_x, scroll_y))
+    ui.update_moving_elements((scroll_x, scroll_y), scale=zoom_factor)
 
 def draw_background(screen):
     screen.fill("darkorchid4")
