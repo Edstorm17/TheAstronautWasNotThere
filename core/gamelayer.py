@@ -10,11 +10,17 @@ class GameObject(Sprite):
 
 
         self.dimensions = dimensions
-        self.pos = pos
+        self.x = pos[0]
+        self.y = pos[1]
 
         raw_img = pygame.image.load(f"assets/world_assets/{image}")
         self.image = pygame.transform.scale(raw_img, (config.TILE_SIZE*dimensions[0], config.TILE_SIZE*dimensions[1]))
         self.rect = self.image.get_rect()
 
+    def get_pos(self):
+        return self.x, self.y
 
+    def set_pos(self, pos):
+        self.x = pos[0]
+        self.y = pos[1]
 
