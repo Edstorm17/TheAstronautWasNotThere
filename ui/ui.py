@@ -4,7 +4,9 @@ import pygame_gui
 import renderer
 
 moving_elements = []
+scaling_elements = []
 registered_events = {}
+
 
 def on_add_button_pressed(event, manager):
     jhg = pygame_gui.ui_manager.UIContainer(relative_rect=pygame.Rect((300,100), (260,70)), manager=manager, is_window_root_container=True)
@@ -44,3 +46,7 @@ def handle_event(event):
 def update_moving_elements(scroll):
     for e, p in moving_elements:
         e.set_position((p[0]+scroll[0], p[1]+scroll[1]))
+
+def update_scaling_elements(scroll):
+    for e, p in moving_elements:
+        pass
