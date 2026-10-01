@@ -1,5 +1,8 @@
 import renderer
+from core.entity import entities
 
+arrow_down_counter_y = 0
+arrow_down_counter_x = 0
 
 # button : left click=1, middle click=2, right click=3, wheelup=4, wheeldown=5
 
@@ -38,6 +41,28 @@ class Keyboard:
     def key_down(self, key, mod, unicode, scancode):
         self.keys_down[key] = True
 
+        global arrow_down_counter_y
+        global arrow_down_counter_x
+        if key == 1073741906:#up
+            arrow_down_counter_y += 1
+            entities.BOMB.set_pos((arrow_down_counter_x, arrow_down_counter_y))
+
+        if key == 1073741903:# right arrow
+
+            arrow_down_counter_x += 1
+            entities.BOMB.set_pos((arrow_down_counter_x, arrow_down_counter_y))
+            ...
+        if key == 1073741904:#left arrow
+
+            arrow_down_counter_x -= 1
+            entities.BOMB.set_pos((arrow_down_counter_x, arrow_down_counter_y))
+
+            ...
+        if key == 1073741905:#down arrow
+
+            arrow_down_counter_y -= 1
+            entities.BOMB.set_pos((arrow_down_counter_x, arrow_down_counter_y))
+            ...
     def key_up(self, key, mod, unicode, scancode):
         self.keys_down[key] = False
 
