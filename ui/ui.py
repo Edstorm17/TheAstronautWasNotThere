@@ -11,7 +11,7 @@ def on_add_button_pressed(event, manager):
     jhg.show()
     Button(relative_rect=pygame.Rect((0, 0), (50, 25)), text="play",object_id="play",manager=manager,container=jhg)
     pygame_gui.elements.UITextEntryBox(relative_rect=pygame.Rect((0, 20), (250, 50)), manager=manager, container=jhg).show()
-    moving_elements.append((jhg, (300-renderer.scroll_x, 100-renderer.scroll_y)))
+    moving_elements.append((jhg, (300-renderer.scroll_x, 100-renderer.scroll_y), (260, 70)))
 
 class Button:
     def __init__(self, relative_rect, text, object_id, manager, func=None,container= None):
@@ -21,7 +21,7 @@ class Button:
         if object_id == "play":
             register_event(pygame_gui.UI_BUTTON_ON_HOVERED, self)
 
-def init(ui_manager, win_manager):
+def init(ui_manager):
     Button(relative_rect=pygame.Rect((0, 0), (50, 50)), text="", object_id="#add_button", manager=ui_manager, func=lambda event: on_add_button_pressed(event, ui_manager))
     Button(relative_rect=pygame.Rect((0, 100), (50, 50)), text="test \n button", object_id="#test2button", manager=ui_manager)
 
@@ -41,6 +41,18 @@ def handle_event(event):
         return True
     return False
 
-def update_moving_elements(scroll):
-    for e, p in moving_elements:
+def update_moving_elements(scroll, scale=None):
+    for e, p, s in moving_elements:
         e.set_position((p[0]+scroll[0], p[1]+scroll[1]))
+        if scale:
+            e.set_dimensions((s[0]*scale, s[1]*scale))
+            for child in e.get_container().elements:
+                child.set_dimensions((s[0]*scale, s[1]*scale), clamp_to_container=False)
+
+def is_mouse_over_element():
+    mouse_pos = pygame.mouse.get_pos()
+    for e, _, _ in moving_elements:
+        if e.rect.collidepoint(mouse_pos):
+            return True
+    return False
+
