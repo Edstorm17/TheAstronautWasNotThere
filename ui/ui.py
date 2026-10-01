@@ -7,16 +7,15 @@ moving_elements = []
 registered_events = {}
 
 def on_add_button_pressed(event, manager):
-    pi = pygame_gui.elements
     jhg = pygame_gui.ui_manager.UIContainer(relative_rect=pygame.Rect((300,100), (260,70)), manager=manager, is_window_root_container=True)
     jhg.show()
-    # pygame_gui.elements.UIButton(relative_rect=pygame.Rect((310, 120), (250, 50)), text="play")
+    Button(relative_rect=pygame.Rect((310, 120), (50, 20)), text="play",object_id="play",manager=manager)
     pygame_gui.elements.UITextEntryBox(relative_rect=pygame.Rect((0, 0), (250, 50)), manager=manager, container=jhg).show()
     moving_elements.append((jhg, (300-renderer.scroll_x, 100-renderer.scroll_y)))
 
 class Button:
-    def __init__(self, relative_rect, text, object_id, manager, func=None):
-        self.button = pygame_gui.elements.UIButton(relative_rect=relative_rect,text=text,object_id=object_id,manager=manager)
+    def __init__(self, relative_rect, text, object_id, manager, func=None,container= None):
+        self.button = pygame_gui.elements.UIButton(relative_rect=relative_rect,text=text,object_id=object_id,manager=manager,container=container)
         self.func = func
         register_event(pygame_gui.UI_BUTTON_PRESSED, self)
 
