@@ -12,7 +12,7 @@ def on_add_button_pressed(event, manager):
     jhg = pygame_gui.ui_manager.UIContainer(relative_rect=pygame.Rect((300,100), (260,70)), manager=manager, is_window_root_container=True)
     jhg.show()
     Button(relative_rect=pygame.Rect((0, 0), (50, 25)), text="play",object_id="play",manager=manager,container=jhg)
-    Button(relative_rect=pygame.Rect((50, 0), (50, 25)), text="move", object_id="play", manager=manager, container=jhg)
+    Button(relative_rect=pygame.Rect((50, 0), (50, 25)), text="move", object_id="move", manager=manager, container=jhg)
     pygame_gui.elements.UITextEntryBox(relative_rect=pygame.Rect((0, 20), (250, 50)), manager=manager, container=jhg).show()
     moving_elements.append((jhg, (300-renderer.scroll_x, 100-renderer.scroll_y)))
 
