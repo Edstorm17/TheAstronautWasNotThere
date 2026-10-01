@@ -1,11 +1,13 @@
 import config
 import renderer
 from core.entity import entities
+from ui import ui
 
 arrow_down_counter_y = 0
 arrow_down_counter_x = 0
 
 # button : left click=1, middle click=2, right click=3, wheelup=4, wheeldown=5
+scroll_allowed = False
 
 class Mouse:
     def __init__(self):
@@ -15,21 +17,31 @@ class Mouse:
 
     def button_down(self, pos, button, touch):
         match button:
-            case 1 | 2 | 3:
+            case 1:
+                self.buttons_down[button-1] = True
+                if not ui.is_mouse_over_element():
+                    global scroll_allowed
+                    scroll_allowed = True
+            case 2 | 3:
                 self.buttons_down[button-1] = True
             case 4:
-                renderer.zoom(1, pos)
+                if not ui.is_mouse_over_element():
+                    renderer.zoom(1, pos)
             case 5:
-                renderer.zoom(-1, pos)
+                if not ui.is_mouse_over_element():
+                    renderer.zoom(-1, pos)
 
     def button_up(self, pos, button, touch):
         if button <= 3:
             self.buttons_down[button-1] = False
+        if button == 1:
+            global scroll_allowed
+            scroll_allowed = False
 
     def motion(self, pos, rel, buttons, touch):
         self.displacement = rel
 
-        if buttons[0]:
+        if buttons[0] and scroll_allowed:
             renderer.scroll(rel)
 
 class Keyboard:
