@@ -56,3 +56,6 @@ def is_mouse_over_element():
             return True
     return False
 
+def update_scaling_elements(scroll):
+    for e, p, _ in moving_elements:
+        pass
