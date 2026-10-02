@@ -4,7 +4,7 @@ import pygame_gui
 import config
 import input
 import renderer
-from ui import ui, win_manager
+from ui import ui, code_window
 
 pygame.init()
 pygame.display.set_caption(config.TITLE)
@@ -12,21 +12,21 @@ pygame.display.set_caption(config.TITLE)
 screen = pygame.display.set_mode(config.WINDOW_SIZE)
 clock = pygame.time.Clock()
 ui_manager = pygame_gui.UIManager(config.WINDOW_SIZE, theme_path="assets/ui_assets/theme.json")
-win_manager = win_manager.WinManager(config.WINDOW_SIZE, theme_path="assets/ui_assets/theme.json")
 
 renderer.init(screen)
-ui.init(ui_manager, win_manager)
+ui.init(ui_manager)
 
 running = True
 
 while running:
     time_delta = clock.tick(60)/1000
     for event in pygame.event.get():
-        if not (ui.handle_event(event) or ui_manager.process_events(event) or win_manager.process_events(event)):
+        if not (ui.handle_event(event) or ui_manager.process_events(event)):
             match event.type:
                 case pygame.QUIT:
                     running = False
                 case pygame.MOUSEBUTTONDOWN:
+                    focus_handler()
                     input.mouse.button_down(event.pos, event.button, event.touch)
                 case pygame.MOUSEBUTTONUP:
                     input.mouse.button_up(event.pos, event.button, event.touch)
@@ -38,11 +38,9 @@ while running:
                     input.keyboard.key_up(event.key, event.mod, event.unicode, event.scancode)
 
     ui_manager.update(time_delta)
-    win_manager.update(time_delta)
 
     renderer.draw_all()
     ui_manager.draw_ui(screen)
-    win_manager.draw_ui(screen)
 
     pygame.display.flip()
 
