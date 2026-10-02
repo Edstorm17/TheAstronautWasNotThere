@@ -1,39 +1,38 @@
 import pygame
 import pygame_gui
 
-from ui.code_window import CodeWindow
+from ui.element import ElementWrapper
 
 moving_elements = []
-registered_events = {}
+registered_events: dict[int, list[ElementWrapper]] = {}
 
 def on_add_button_pressed(event, manager):
-   CodeWindow(event,manager)
+    from ui.element import CodeWindow
+    CodeWindow(lambda e: print("Keydown"), manager)
 
-class Button:
-    def __init__(self, relative_rect, text, object_id, manager, func=None,container= None):
-        self.button = pygame_gui.elements.UIButton(relative_rect=relative_rect,text=text,object_id=object_id,manager=manager,container=container,)
-        self.func = func
-        register_event(pygame_gui.UI_BUTTON_PRESSED, self)
-        if object_id == "scale":
-            register_event(pygame_gui.UI_BUTTON_START_PRESS, self)
 
 def init(ui_manager):
-    Button(relative_rect=pygame.Rect((0, 0), (50, 50)), text="", object_id="#add_button", manager=ui_manager, func=lambda event: on_add_button_pressed(event, ui_manager))
-    Button(relative_rect=pygame.Rect((0, 100), (50, 50)), text="test \n button", object_id="#test2button", manager=ui_manager)
+    from ui.element import Button
+    Button(relative_rect=pygame.Rect((0, 0), (50, 50)), text="", object_id="#add_button", manager=ui_manager, click_func=lambda event: on_add_button_pressed(event, ui_manager))
+    # Button(relative_rect=pygame.Rect((0, 100), (50, 50)), text="test \n button", object_id="#test2button", manager=ui_manager)
 
+def register_events(element: ElementWrapper):
+    for k in element.event_funcs.keys():
+        register_event(k, element)
 
-def register_event(event_id, but):
+def register_event(event_id, element: ElementWrapper):
     if registered_events.get(event_id) is None:
-        registered_events[event_id] = [but]
+        registered_events[event_id] = [element]
     else:
-        registered_events[event_id].append(but)
+        registered_events[event_id].append(element)
 
 def handle_event(event):
+    if event.type == pygame.KEYDOWN:
+        pass
     if event.type in registered_events:
         for ele in registered_events[event.type]:
-            if event.ui_element == ele.button:
-                if ele.func:
-                    ele.func(event)
+            if event.ui_element == ele.element_internal:
+                ele.event_funcs[event.type](event)
         return True
     return False
 
@@ -54,5 +53,4 @@ def is_mouse_over_element():
 
 def update_scaling_elements(self,container):
     while pygame.MOUSEBUTTONDOWN:
-        if register_event(pygame.MOUSEMOTION, ):
-            pygame.transform.scale()
+        pass
