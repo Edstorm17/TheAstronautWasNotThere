@@ -1,26 +1,21 @@
 import pygame
 import pygame_gui
 
-import renderer
+from ui.code_window import CodeWindow
 
 moving_elements = []
 registered_events = {}
 
 def on_add_button_pressed(event, manager):
-    jhg = pygame_gui.ui_manager.UIContainer(relative_rect=pygame.Rect((300,100), (260,70)), manager=manager, is_window_root_container=True)
-    jhg.show()
-    Button(relative_rect=pygame.Rect((0, 0), (50, 25)), text="play",object_id="play",manager=manager,container=jhg)
-    Button(relative_rect=pygame.Rect((50, 0), (50, 25)), text="move", object_id="move", manager=manager, container=jhg)
-    pygame_gui.elements.UITextEntryBox(relative_rect=pygame.Rect((0, 20), (250, 50)), manager=manager, container=jhg).show()
-    moving_elements.append((jhg, (300-renderer.scroll_x, 100-renderer.scroll_y), (260, 70)))
+   CodeWindow(event,manager)
 
 class Button:
     def __init__(self, relative_rect, text, object_id, manager, func=None,container= None):
-        self.button = pygame_gui.elements.UIButton(relative_rect=relative_rect,text=text,object_id=object_id,manager=manager,container=container)
+        self.button = pygame_gui.elements.UIButton(relative_rect=relative_rect,text=text,object_id=object_id,manager=manager,container=container,)
         self.func = func
         register_event(pygame_gui.UI_BUTTON_PRESSED, self)
-        if object_id == "play":
-            register_event(pygame_gui.UI_BUTTON_ON_HOVERED, self)
+        if object_id == "scale":
+            register_event(pygame_gui.UI_BUTTON_START_PRESS, self)
 
 def init(ui_manager):
     Button(relative_rect=pygame.Rect((0, 0), (50, 50)), text="", object_id="#add_button", manager=ui_manager, func=lambda event: on_add_button_pressed(event, ui_manager))
@@ -57,6 +52,7 @@ def is_mouse_over_element():
             return True
     return False
 
-def update_scaling_elements(scroll):
-    for e, p, _ in moving_elements:
-        pass
+def update_scaling_elements(self,container):
+    while pygame.MOUSEBUTTONDOWN:
+        if register_event(pygame.MOUSEMOTION, ):
+            pygame.transform.scale()

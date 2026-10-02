@@ -1,4 +1,3 @@
-import config
 import renderer
 from core.entity import entities
 from ui import ui
@@ -53,6 +52,7 @@ class Keyboard:
 
         global arrow_down_counter_y
         global arrow_down_counter_x
+        global focused
         if key == 1073741906:#up
             # if arrow_down_counter_y > config.map_size:
             #     entities.BOMB.set_pos((arrow_down_counter_x, config.map_size))
@@ -61,14 +61,14 @@ class Keyboard:
             entities.BOMB.move((0, 1))
 
 
-        if key == 1073741903:# right arrow
+        elif key == 1073741903:# right arrow
             # if arrow_down_counter_x > 10:
             #     entities.BOMB.set_pos((10, arrow_down_counter_y))
             # arrow_down_counter_x += 1
             # entities.BOMB.set_pos((arrow_down_counter_x, arrow_down_counter_y))
             entities.BOMB.move((1, 0))
 
-        if key == 1073741904:#left arrow
+        elif key == 1073741904:#left arrow
             # if arrow_down_counter_x < 0:
             #     entities.BOMB.set_pos((0, arrow_down_counter_y))
             #
@@ -77,12 +77,20 @@ class Keyboard:
             entities.BOMB.move((-1, 0))
 
             ...
-        if key == 1073741905:#down arrow
+        elif key == 1073741905:#down arrow
             # if arrow_down_counter_y < 0:
             #     entities.BOMB.set_pos((arrow_down_counter_x, 0))
             # arrow_down_counter_y -= 1
             # entities.BOMB.set_pos((arrow_down_counter_x, arrow_down_counter_y))
             entities.BOMB.move((0, -1))
+
+        else:
+            pass
+
+
+
+
+
 
     def key_up(self, key, mod, unicode, scancode):
         self.keys_down[key] = False

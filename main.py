@@ -4,7 +4,7 @@ import pygame_gui
 import config
 import input
 import renderer
-from ui import ui
+from ui import ui, code_window
 
 pygame.init()
 pygame.display.set_caption(config.TITLE)
@@ -26,6 +26,7 @@ while running:
                 case pygame.QUIT:
                     running = False
                 case pygame.MOUSEBUTTONDOWN:
+                    focus_handler()
                     input.mouse.button_down(event.pos, event.button, event.touch)
                 case pygame.MOUSEBUTTONUP:
                     input.mouse.button_up(event.pos, event.button, event.touch)
