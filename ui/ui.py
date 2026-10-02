@@ -8,7 +8,7 @@ registered_events: dict[int, list[ElementWrapper]] = {}
 
 def on_add_button_pressed(event, manager):
     from ui.element import CodeWindow
-    CodeWindow(lambda e: print("Keydown"), manager)
+    CodeWindow(manager)
 
 
 def init(ui_manager):
@@ -27,8 +27,11 @@ def register_event(event_id, element: ElementWrapper):
         registered_events[event_id].append(element)
 
 def handle_event(event):
+    from ui.element import set_focused, focused
     if event.type == pygame.KEYDOWN:
-        pass
+        print(focused)
+    elif event.type == pygame.MOUSEBUTTONDOWN:
+        set_focused(event.pos)
     if event.type in registered_events:
         for ele in registered_events[event.type]:
             if event.ui_element == ele.element_internal:
@@ -51,6 +54,10 @@ def is_mouse_over_element():
             return True
     return False
 
+
 def update_scaling_elements(self,container):
     while pygame.MOUSEBUTTONDOWN:
         pass
+
+
+    print("focused")
