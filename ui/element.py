@@ -12,7 +12,8 @@ box_y = 50
 box_width = 700
 line_height = 35
 windows: list[CodeWindow] = []
-
+color_index = {
+    "def": (252,90,3),}
 
 class ElementWrapper:
     def __init__(self, element_internal, event_funcs: dict):
@@ -43,12 +44,20 @@ class CodeWindow(ElementWrapper):
         super().__init__(self.jhg ,{})
         windows.append(self)
         print(windows)
-        font = pygame.font.Font('freesansbold.ttf', 32)
-        font.render(for i in self.text: )text
+
         # Button(relative_rect=pygame.Rect((0, 0), (50, 25)), text="play", object_id="play", manager=manager,container=jhg)
         # Button(relative_rect=pygame.Rect((50, 0), (50, 25)), text="move", object_id="move", manager=manager,container=jhg)
         # Button(relative_rect=pygame.Rect((100, 0), (50, 25)), text="scale", object_id="scale", manager=manager,container=jhg, click_func=lambda e: update_scaling_elements(jhg))
         moving_elements.append((self.jhg, (300 - renderer.scroll_x, 100 - renderer.scroll_y), (260, 70)))
+
+def draw_text():
+    #for i in range()
+    text_box = pygame_gui.elements.UITextBox(
+        html_text= focused.text,
+        relative_rect= pygame.Rect((0, 0), (560, 360)),
+        manager= focused.manager,
+        container= focused.jhg)
+
 
 def set_focused(pos):
     global focused
@@ -56,6 +65,14 @@ def set_focused(pos):
         if window.element_internal.rect.collidepoint(pos):
             focused = window
             return
+
+
+
+def key_down(event):
+    if focused is not None:
+        focused.text = focused.text + event.unicode
+        draw_text()
+        print(focused.text)
 
 
 class Button(ElementWrapper):

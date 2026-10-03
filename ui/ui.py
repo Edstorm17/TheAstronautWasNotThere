@@ -27,9 +27,9 @@ def register_event(event_id, element: ElementWrapper):
         registered_events[event_id].append(element)
 
 def handle_event(event):
-    from ui.element import set_focused, focused
+    from ui.element import set_focused, focused,key_down
     if event.type == pygame.KEYDOWN:
-        print(focused)
+        key_down(event)
     elif event.type == pygame.MOUSEBUTTONDOWN:
         set_focused(event.pos)
     if event.type in registered_events:
