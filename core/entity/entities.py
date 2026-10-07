@@ -89,7 +89,6 @@ class Bomb(Entity):
         self.state = states[random.randint(0, 2)]
         self.type = types[random.randint(0, 2)]
         self.hardness = random.randint(1, 10)
-
 BOMB = Bomb()
 SHIP = Ship()
 ROCK = Rock()
