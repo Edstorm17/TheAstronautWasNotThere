@@ -1,7 +1,7 @@
 import pygame
 
 import config
-from ui import ui
+from ui import gui
 from core.entity import entities
 from config import TILE_SIZE
 from core.item import items
@@ -30,7 +30,7 @@ def scroll(delta):
     global scroll_y
     scroll_x += delta[0]
     scroll_y += delta[1]
-    ui.update_moving_elements((scroll_x, scroll_y))
+    gui.update_moving_elements((scroll_x, scroll_y))
 
 def zoom(amount, zoom_center):
     global zoom_factor
@@ -40,7 +40,7 @@ def zoom(amount, zoom_center):
     scroll_x = zoom_center[0] - ((zoom_center[0]-scroll_x)/zoom_factor)*new_zoom_factor
     scroll_y = zoom_center[1] - ((zoom_center[1]-scroll_y)/zoom_factor)*new_zoom_factor
     zoom_factor = new_zoom_factor
-    ui.update_moving_elements((scroll_x, scroll_y), scale=zoom_factor)
+    gui.update_moving_elements((scroll_x, scroll_y), scale=zoom_factor)
 
 def draw_background(screen):
     screen.fill("darkorchid4")

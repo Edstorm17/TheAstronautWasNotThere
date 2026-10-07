@@ -19,12 +19,12 @@ class ElementWrapper:
     def __init__(self, element_internal, event_funcs: dict):
         self.element_internal = element_internal
         self.event_funcs = event_funcs
-        from ui.ui import register_events
+        from gui.gui import register_events
         register_events(self)
 
 class CodeWindow(ElementWrapper):
     def __init__(self, manager):
-        from ui.ui import update_scaling_elements, moving_elements
+        from gui.gui import update_scaling_elements, moving_elements
         def click_func():
             if not self.focused:
                 self.focused = True

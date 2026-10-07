@@ -1,6 +1,6 @@
 import renderer
 from core.entity import entities
-from ui import ui
+from ui import gui
 
 arrow_down_counter_y = 0
 arrow_down_counter_x = 0
@@ -18,16 +18,16 @@ class Mouse:
         match button:
             case 1:
                 self.buttons_down[button-1] = True
-                if not ui.is_mouse_over_element():
+                if not gui.is_mouse_over_element():
                     global scroll_allowed
                     scroll_allowed = True
             case 2 | 3:
                 self.buttons_down[button-1] = True
             case 4:
-                if not ui.is_mouse_over_element():
+                if not gui.is_mouse_over_element():
                     renderer.zoom(1, pos)
             case 5:
-                if not ui.is_mouse_over_element():
+                if not gui.is_mouse_over_element():
                     renderer.zoom(-1, pos)
 
     def button_up(self, pos, button, touch):
