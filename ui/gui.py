@@ -20,7 +20,10 @@ class GUIManager:
     def handle_event(self, event):
         if event.type in self.registered_events:
             for ele in self.registered_events[event.type]:
-                if event.ui_element == ele.element_internal:
+                if hasattr(event, 'ui_element'):
+                    if event.ui_element == ele.element_internal:
+                        ele.event_funcs[event.type](event)
+                else:
                     ele.event_funcs[event.type](event)
             return True
         return False
@@ -69,10 +72,10 @@ def update_moving_elements(scroll, scale=None):
     if isinstance(active_manager, GameGUIManager):
         active_manager.update_moving_elements(scroll, scale)
 
-def is_mouse_over_element(self):
+def is_mouse_over_element():
     if isinstance(active_manager, GameGUIManager):
         mouse_pos = pygame.mouse.get_pos()
-        for e, _, _ in self.moving_elements:
+        for e, _, _ in active_manager.moving_elements:
             if e.rect.collidepoint(mouse_pos):
                 return True
         return False

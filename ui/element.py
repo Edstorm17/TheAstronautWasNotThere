@@ -22,13 +22,8 @@ class ElementWrapper:
         self.element_internal = element_internal
         # self.event_funcs = event_funcs
         self.manager = manager
-        self.event_funcs = {
-            pygame.MOUSEBUTTONDOWN, self.on_click
-        }
+        self.event_funcs = event_funcs
         manager.register_events(self)
-
-    def on_click(self, event):
-        pass
 
 class CodeWindow(ElementWrapper):
     def __init__(self, manager):
@@ -39,7 +34,10 @@ class CodeWindow(ElementWrapper):
         print(windows)
         self.jhg = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0, 20), (box_width, 50)), manager=manager.manager)
         self.jhg.show()
-        super().__init__(self.jhg ,{}, manager)
+        super().__init__(self.jhg ,{
+            pygame.MOUSEBUTTONDOWN: self.on_click,
+            pygame.KEYDOWN: self.on_key_down
+        }, manager)
         windows.append(self)
         print(windows)
 
@@ -49,9 +47,17 @@ class CodeWindow(ElementWrapper):
         manager.moving_elements.append((self.jhg, (300 - renderer.scroll_x, 100 - renderer.scroll_y), (260, 70)))
 
     def on_click(self, event):
-        if not self.focused:
-            self.focused = True
+        if not is_mouse_over(self):
+            return
+        self.focused = True
+        global focused
+        focused = self
         print("focused or not ")
+
+    def on_key_down(self, event):
+        global focused
+        if focused == self:
+            print('typed')
 
 def add_tags(tag, word):
     return "<%s>%s</%s>" % (tag, word, tag)
@@ -108,3 +114,7 @@ class Button(ElementWrapper):
         button = pygame_gui.elements.UIButton(relative_rect=relative_rect, text=text, object_id=object_id, manager=manager.manager, container=container)
         button.show()
         super().__init__(button, {pygame_gui.UI_BUTTON_PRESSED: click_func}, manager)
+
+
+def is_mouse_over(element: ElementWrapper):
+    return element.element_internal.rect.collidepoint(pygame.mouse.get_pos())
