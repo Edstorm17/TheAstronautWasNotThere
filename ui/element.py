@@ -13,45 +13,67 @@ box_width = 700
 line_height = 35
 windows: list[CodeWindow] = []
 color_index = {
-    "def": (252,90,3),}
+    "def": (252,90,3),
+
+}
 
 class ElementWrapper:
-    def __init__(self, element_internal, event_funcs: dict):
+    def __init__(self, element_internal, event_funcs: dict, manager):
         self.element_internal = element_internal
-        self.event_funcs = event_funcs
-        from gui.gui import register_events
-        register_events(self)
+        # self.event_funcs = event_funcs
+        self.manager = manager
+        self.event_funcs = {
+            pygame.MOUSEBUTTONDOWN, self.on_click
+        }
+        manager.register_events(self)
+
+    def on_click(self, event):
+        pass
 
 class CodeWindow(ElementWrapper):
     def __init__(self, manager):
-        from gui.gui import update_scaling_elements, moving_elements
-        def click_func():
-            if not self.focused:
-                self.focused = True
-            print("focused or not ")
-
-        def keydown_func():
-           if self.focused:
-               pass
         self.text = []
-        self.manager = manager
         self.text = ""
         self.cursor_position = 0
         self.focused = False
         print(windows)
-        self.jhg = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0, 20), (box_width, 50)), manager=self.manager)
+        self.jhg = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0, 20), (box_width, 50)), manager=manager.manager)
         self.jhg.show()
-        super().__init__(self.jhg ,{})
+        super().__init__(self.jhg ,{}, manager)
         windows.append(self)
         print(windows)
 
         # Button(relative_rect=pygame.Rect((0, 0), (50, 25)), text="play", object_id="play", manager=manager,container=jhg)
         # Button(relative_rect=pygame.Rect((50, 0), (50, 25)), text="move", object_id="move", manager=manager,container=jhg)
         # Button(relative_rect=pygame.Rect((100, 0), (50, 25)), text="scale", object_id="scale", manager=manager,container=jhg, click_func=lambda e: update_scaling_elements(jhg))
-        moving_elements.append((self.jhg, (300 - renderer.scroll_x, 100 - renderer.scroll_y), (260, 70)))
+        manager.moving_elements.append((self.jhg, (300 - renderer.scroll_x, 100 - renderer.scroll_y), (260, 70)))
+
+    def on_click(self, event):
+        if not self.focused:
+            self.focused = True
+        print("focused or not ")
+
+def add_tags(tag, word):
+    return "<%s>%s</%s>" % (tag, word, tag)
 
 def draw_text():
-    #for i in range()
+    mot = ""
+    for i in range(len(focused.text)):
+        p = focused.text
+        n = p[i]
+        if n != " ":
+            mot.join(n)
+        else:
+            for m in color_index.keys():
+                print("mot caché")
+                print(m)
+                if mot == m:
+
+                    focused.text = p[:i-len(mot)] + draw_text(f"<p color:rgb({m})>",mot,"</p>") + p[i::]
+            mot = ""
+
+
+
     text_box = pygame_gui.elements.UITextBox(
         html_text= focused.text,
         relative_rect= pygame.Rect((0, 0), (560, 360)),
@@ -65,7 +87,6 @@ def set_focused(pos):
         if window.element_internal.rect.collidepoint(pos):
             focused = window
             return
-
 
 
 def key_down(event):
@@ -84,6 +105,6 @@ def key_down(event):
 
 class Button(ElementWrapper):
     def __init__(self, relative_rect, text, object_id, manager, click_func, container=None):
-        button = pygame_gui.elements.UIButton(relative_rect=relative_rect, text=text, object_id=object_id, manager=manager, container=container)
+        button = pygame_gui.elements.UIButton(relative_rect=relative_rect, text=text, object_id=object_id, manager=manager.manager, container=container)
         button.show()
-        super().__init__(button, {pygame_gui.UI_BUTTON_PRESSED: click_func})
+        super().__init__(button, {pygame_gui.UI_BUTTON_PRESSED: click_func}, manager)

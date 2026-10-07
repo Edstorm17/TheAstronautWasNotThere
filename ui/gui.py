@@ -18,10 +18,6 @@ class GUIManager:
             self.registered_events[event_id].append(element)
 
     def handle_event(self, event):
-        if event.type == pygame.KEYDOWN:
-            self.key_down(event)
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            self.mouse_button_down(event)
         if event.type in self.registered_events:
             for ele in self.registered_events[event.type]:
                 if event.ui_element == ele.element_internal:
@@ -29,21 +25,15 @@ class GUIManager:
             return True
         return False
 
-    def key_down(self, event):
-        pass
-
-    def mouse_button_down(self, event):
-        pass
-
 class GameGUIManager(GUIManager):
     def __init__(self, ui_manager):
         super().__init__(ui_manager)
         self.moving_elements = []
 
-        def on_add_button_pressed(self, event):
-            CodeWindow(self.manager)
+        def on_add_button_pressed(event):
+            CodeWindow(self)
 
-        Button(relative_rect=pygame.Rect((0, 0), (50, 50)), text="", object_id="#add_button", manager=self.manager, click_func=lambda event: on_add_button_pressed(event, self.manager))
+        Button(relative_rect=pygame.Rect((0, 0), (50, 50)), text="", object_id="#add_button", manager=self, click_func=on_add_button_pressed)
 
     def update_moving_elements(self, scroll, scale=None):
         for e, p, s in self.moving_elements:

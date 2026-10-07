@@ -21,7 +21,7 @@ running = True
 while running:
     time_delta = clock.tick(60)/1000
     for event in pygame.event.get():
-        if not (gui.handle_event(event) or ui_manager.process_events(event)):
+        if not (gui.current_manager().handle_event(event) or ui_manager.process_events(event)):
             match event.type:
                 case pygame.QUIT:
                     running = False
