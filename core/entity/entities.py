@@ -1,6 +1,5 @@
 from random import random
 import random
-
 import config
 from core.gamelayer import GameObject
 

@@ -46,6 +46,14 @@ def draw_background(screen):
     screen.fill("darkorchid4")
 
 def draw_game_layer(screen):
+    def draw_text(text):
+        for tex, color, start_pos, end_pos in text:
+            surface = font.render(
+                tex,
+                True,
+                color
+            )
+
     def draw_obj_gl(img, pos, dimensions):
         rect = img.get_rect()
 
