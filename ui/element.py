@@ -9,7 +9,7 @@ text = ""
 lines = [""]
 box_x = 50
 box_y = 50
-box_width = 700
+
 line_height = 35
 windows: list[CodeWindow] = []
 color_index = {
@@ -27,13 +27,15 @@ class ElementWrapper:
 
 class CodeWindow(ElementWrapper):
     def __init__(self, manager):
+        self.width = 50
+        self.height = 50
         self.text = []
         self.text = ""
         self.cursor_position = 0
         self.focused = False
+        self.line_n = 0
         print(windows)
-        self.jhg = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0, 20), (box_width, 50)), manager=manager.manager)
-        self.jhg.show()
+        self.jhg = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0, 20), (self.width, self.height + 50*self.line_n)), manager=manager.manager)
         super().__init__(self.jhg ,{
             pygame.MOUSEBUTTONDOWN: self.on_click,
             pygame.KEYDOWN: self.on_key_down
@@ -62,7 +64,9 @@ class CodeWindow(ElementWrapper):
                 focused.text = focused.text[:-1]
             elif event.key == 13:
                 print("entred")
-                focused.text += "line.\n"
+                focused.text += "\n"
+                focused.line_n += 1
+                focused.jhg.set_dimensions((focused.width, focused.height + 24* focused.line_n), clamp_to_container=False)
             else:
                 focused.text += event.unicode
                 print(focused.text)
@@ -91,7 +95,7 @@ def draw_text():
 
         text_box = pygame_gui.elements.UITextBox(
             html_text= focused.text,
-            relative_rect= pygame.Rect((0, 0), (560, 360)),
+            relative_rect= pygame.Rect((0, 0), (300, (360 + 50*focused.line_n))),
             manager= focused.manager.manager,
             container= focused.jhg)
 
