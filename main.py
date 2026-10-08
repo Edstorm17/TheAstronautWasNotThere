@@ -4,7 +4,7 @@ from core.games.game1 import new_level
 import config
 import input
 import renderer
-from ui import ui
+from ui import gui
 
 pygame.init()
 pygame.display.set_caption(config.TITLE)
@@ -14,7 +14,7 @@ clock = pygame.time.Clock()
 ui_manager = pygame_gui.UIManager(config.WINDOW_SIZE, theme_path="assets/ui_assets/theme.json")
 
 renderer.init(screen)
-ui.init(ui_manager)
+gui.init(ui_manager)
 
 running = True
 
@@ -23,7 +23,7 @@ new_level(10)
 while running:
     time_delta = clock.tick(60)/1000
     for event in pygame.event.get():
-        if not (ui.handle_event(event) or ui_manager.process_events(event)):
+        if not (gui.active_manager.handle_event(event) or ui_manager.process_events(event)):
 
             match event.type:
                 case pygame.QUIT:

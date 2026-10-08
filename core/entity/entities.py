@@ -4,14 +4,16 @@ import config
 from core.gamelayer import GameObject
 
 for_render = []
+ships = []
 states = ["fresh", "crackled", "destroyed"]
 types = ["hardened", "softened", "crackled"]
 
 
 class Entity(GameObject):
-    def __init__(self, image, pos, dimensions=(1, 1)):
+    def __init__(self, image, pos, dimensions=(1, 1), auto_render=True):
         super().__init__(image, pos, dimensions)
-        for_render.append(self)
+        if auto_render:
+            for_render.append(self)
 
     def move(self, displacement):
         self.x = min(max(self.x + displacement[0], 0), config.map_size-1)
@@ -31,6 +33,7 @@ class Ship(Entity):
         self.state = states[random.randint(0, 2)]
         self.type = types[random.randint(0, 2)]
         self.hardness = random.randint(1, 10)
+        ships.append(self)
     def pos(self):
         return self.pos
     def state(self):
