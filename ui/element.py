@@ -57,34 +57,43 @@ class CodeWindow(ElementWrapper):
     def on_key_down(self, event):
         global focused
         if focused == self:
-            print('typed')
+            print(event.unicode)
+            if event.key == pygame.K_BACKSPACE:
+                focused.text = focused.text[:-1]
+            elif event.key == 13:
+                print("entred")
+                focused.text += "line.\n"
+            else:
+                focused.text += event.unicode
+                print(focused.text)
 
 def add_tags(tag, word):
     return "<%s>%s</%s>" % (tag, word, tag)
 
 def draw_text():
-    mot = ""
-    for i in range(len(focused.text)):
-        p = focused.text
-        n = p[i]
-        if n != " ":
-            mot.join(n)
-        else:
-            for m in color_index.keys():
-                print("mot caché")
-                print(m)
-                if mot == m:
+    if focused is not None:
+        mot = ""
+        for i in range(len(focused.text)):
+            p = focused.text
+            n = p[i]
+            if n != " ":
+                mot.join(n)
+            else:
+                for m in color_index.keys():
+                    print("mot caché")
+                    print(m)
+                    if mot == m:
 
-                    focused.text = p[:i-len(mot)] + draw_text(f"<p color:rgb({m})>",mot,"</p>") + p[i::]
-            mot = ""
+                        pass
+                mot = ""
 
 
 
-    text_box = pygame_gui.elements.UITextBox(
-        html_text= focused.text,
-        relative_rect= pygame.Rect((0, 0), (560, 360)),
-        manager= focused.manager,
-        container= focused.jhg)
+        text_box = pygame_gui.elements.UITextBox(
+            html_text= focused.text,
+            relative_rect= pygame.Rect((0, 0), (560, 360)),
+            manager= focused.manager.manager,
+            container= focused.jhg)
 
 
 def set_focused(pos):

@@ -89,6 +89,7 @@ def draw_ui_layer(screen):
         draw_item(i, tem)
 
 def draw_all():
+    from ui.element import draw_text
     draw_background(SCREEN)
 
     draw_game_layer(world_surface)
@@ -98,3 +99,5 @@ def draw_all():
 
     SCREEN.blit(scaled_world_surface, (scroll_x, scroll_y))
     draw_ui_layer(SCREEN)
+    draw_text()
+
