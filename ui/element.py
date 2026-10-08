@@ -95,18 +95,7 @@ def set_focused(pos):
             return
 
 
-def key_down(event):
-    if focused is not None:
-        if event.key == pygame.K_BACKSPACE:
-            print("packspace")
-            remove = ""
 
-            focused.text = focused.text[:-1:]
-
-        else:
-            focused.text = focused.text + str(event.unicode)
-        draw_text()
-        print(focused.text)
 
 
 class Button(ElementWrapper):
