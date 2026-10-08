@@ -1,7 +1,7 @@
 import pygame
 
 import config
-from ui import gui
+from ui import ui
 from core.entity import entities
 from config import TILE_SIZE
 from core.item import items
@@ -30,7 +30,7 @@ def scroll(delta):
     global scroll_y
     scroll_x += delta[0]
     scroll_y += delta[1]
-    gui.update_moving_elements((scroll_x, scroll_y))
+    ui.update_moving_elements((scroll_x, scroll_y))
 
 def zoom(amount, zoom_center):
     global zoom_factor
@@ -40,7 +40,7 @@ def zoom(amount, zoom_center):
     scroll_x = zoom_center[0] - ((zoom_center[0]-scroll_x)/zoom_factor)*new_zoom_factor
     scroll_y = zoom_center[1] - ((zoom_center[1]-scroll_y)/zoom_factor)*new_zoom_factor
     zoom_factor = new_zoom_factor
-    gui.update_moving_elements((scroll_x, scroll_y), scale=zoom_factor)
+    ui.update_moving_elements((scroll_x, scroll_y), scale=zoom_factor)
 
 def draw_background(screen):
     screen.fill("darkorchid4")
@@ -76,9 +76,6 @@ def draw_game_layer(screen):
     for entity in entities.get_for_render():
         draw_obj_gl(entity.image, entity.get_pos(), entity.dimensions)
 
-    for ship in entities.ships:
-        draw_obj_gl(ship.image, ship.get_pos(), ship.dimensions)
-
 def draw_ui_layer(screen):
     def draw_item(index, item):
         x = screen.get_width() - (index+1)*config.ITEM_SIZE
@@ -92,7 +89,6 @@ def draw_ui_layer(screen):
         draw_item(i, tem)
 
 def draw_all():
-    from ui.element import draw_text
     draw_background(SCREEN)
 
     draw_game_layer(world_surface)
@@ -102,5 +98,3 @@ def draw_all():
 
     SCREEN.blit(scaled_world_surface, (scroll_x, scroll_y))
     draw_ui_layer(SCREEN)
-    draw_text()
-
