@@ -35,7 +35,7 @@ class CodeWindow(ElementWrapper):
         self.focused = False
         self.line_n = 0
         print(windows)
-        self.jhg = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0, 20), (self.width, self.height + 50*self.line_n)), manager=manager.manager)
+        self.jhg = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0, 20), (self.width, self.height + 100*self.line_n)), manager=manager.manager)
         super().__init__(self.jhg ,{
             pygame.MOUSEBUTTONDOWN: self.on_click,
             pygame.KEYDOWN: self.on_key_down
@@ -106,6 +106,8 @@ def set_focused(pos):
     for window in windows:
         if window.element_internal.rect.collidepoint(pos):
             focused = window
+        else:
+            focused = None
             return
 
 
