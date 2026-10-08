@@ -76,6 +76,9 @@ def draw_game_layer(screen):
     for entity in entities.get_for_render():
         draw_obj_gl(entity.image, entity.get_pos(), entity.dimensions)
 
+    for ship in entities.ships:
+        draw_obj_gl(ship.image, ship.get_pos(), ship.dimensions)
+
 def draw_ui_layer(screen):
     def draw_item(index, item):
         x = screen.get_width() - (index+1)*config.ITEM_SIZE

@@ -20,7 +20,7 @@ color_index = {
 class ElementWrapper:
     def __init__(self, element_internal, event_funcs: dict, manager):
         self.element_internal = element_internal
-        # self.event_funcs = event_funcs
+        self.event_funcs = event_funcs
         self.manager = manager
         self.event_funcs = event_funcs
         manager.register_events(self)
@@ -71,7 +71,8 @@ def add_tags(tag, word):
     return "<%s>%s</%s>" % (tag, word, tag)
 
 def draw_text():
-    if focused is not None:
+    from ui.gui import GameGUIManager
+    if focused is not None and isinstance(focused.manager, GameGUIManager):
         mot = ""
         for i in range(len(focused.text)):
             p = focused.text
