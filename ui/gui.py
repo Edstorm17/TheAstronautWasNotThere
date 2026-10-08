@@ -2,10 +2,14 @@ import pygame
 
 from ui.element import ElementWrapper, CodeWindow, Button
 
+
 class GUIManager:
     def __init__(self, ui_manager):
         self.manager = ui_manager
         self.registered_events: dict[int, list[ElementWrapper]] = {}
+
+    def initialize(self):
+        pass
 
     def register_events(self, element: ElementWrapper):
         for k in element.event_funcs.keys():
@@ -36,7 +40,13 @@ class GameGUIManager(GUIManager):
         def on_add_button_pressed(event):
             CodeWindow(self)
 
+        def on_tree_button_pressed(event):
+            global active_manager
+            active_manager = tree_gui_manager
+            active_manager.initialize()
+
         Button(relative_rect=pygame.Rect((0, 0), (50, 50)), text="", object_id="#add_button", manager=self, click_func=on_add_button_pressed)
+        Button(relative_rect=pygame.Rect((60, 0), (50, 50)), text="Tree", object_id="#tree", manager=self, click_func=on_tree_button_pressed)
 
     def update_moving_elements(self, scroll, scale=None):
         for e, p, s in self.moving_elements:
@@ -53,14 +63,24 @@ class GameGUIManager(GUIManager):
                 return True
         return False
 
+class TreeGUIManager(GUIManager):
+    def __init__(self, manager):
+        super().__init__(manager)
+
+    def initialize(self):
+        from ui.tree import TreeWindow
+        TreeWindow(self)
 
 active_manager: GUIManager | None = None
 game_gui_manager: GameGUIManager | None = None
+tree_gui_manager: TreeGUIManager  | None = None
 
 def init(ui_manager):
     global game_gui_manager
     global active_manager
+    global tree_gui_manager
     game_gui_manager = GameGUIManager(ui_manager)
+    tree_gui_manager = TreeGUIManager(ui_manager)
 
     active_manager = game_gui_manager
 
