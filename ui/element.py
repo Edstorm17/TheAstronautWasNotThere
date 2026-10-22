@@ -1,5 +1,5 @@
 from pydoc import html
-
+import asyncio
 import pygame
 import pygame_gui
 from pygame import draw
@@ -29,6 +29,8 @@ class ElementWrapper:
 
 class CodeWindow(ElementWrapper):
     def __init__(self, manager):
+        self.ww = 20
+        self.space = 0
         self.width = 160
         self.height = 70
         self.text = []
@@ -65,14 +67,16 @@ class CodeWindow(ElementWrapper):
             print(event.unicode)
             if event.key == pygame.K_BACKSPACE:
                 focused.text = focused.text[:-1]
+                focused.space += 1
             elif event.key == 13:
                 print("entred")
                 focused.text += "\n"
                 focused.line_n += 1
-                focused.jhg.set_dimensions((focused.width, focused.height + 24* focused.line_n), clamp_to_container=False)
+                focused.jhg.set_dimensions((focused.width+focused.ww, focused.height + 24* focused.line_n), clamp_to_container=True)
             else:
                 focused.text += event.unicode
                 print(focused.text)
+        draw_text()
 
 def add_tags(tag, word):
     return "<%s>%s</%s>" % (tag, word, tag)
@@ -81,18 +85,13 @@ def draw_text():
     from ui.gui import GameGUIManager
     if focused is not None and isinstance(focused.manager, GameGUIManager):
         p = html.escape(focused.text)
-
-        p = re.sub(
-            r'def\b',
-            '<font color="#FFA500">def</font>',
-            p
-        )
-
+        p = re.sub(r'def\b', '<font color="#FFA500">def</font>', p)
+        p = re.sub(r'(\w+)(?=\(\))', r'<font color="#004cff">\1</font>',p)
         p = p.replace("\n", "<br>")
 
         text_box = pygame_gui.elements.UITextBox(
             html_text= p,
-            relative_rect= pygame.Rect((0, 25), (300, (360 + 24*focused.line_n))),
+            relative_rect= pygame.Rect((0, 25), ((300+focused.ww), (360 + 24*focused.line_n))),
             manager= focused.manager.manager,
             container= focused.jhg)
 
