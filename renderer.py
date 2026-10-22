@@ -15,10 +15,7 @@ zoom_factor = 1
 font = None
 
 def init(screen):
-    global SCREEN
-    global scroll_x
-    global scroll_y
-    global font
+    global SCREEN, scroll_x, scroll_y, font
 
     SCREEN = screen
     scroll_x = screen.get_width()//2 - map_px_size//2
@@ -26,16 +23,13 @@ def init(screen):
     font = pygame.font.SysFont(None, 50)
 
 def scroll(delta):
-    global scroll_x
-    global scroll_y
+    global scroll_x, scroll_y
     scroll_x += delta[0]
     scroll_y += delta[1]
     gui.update_moving_elements((scroll_x, scroll_y))
 
 def zoom(amount, zoom_center):
-    global zoom_factor
-    global scroll_x
-    global scroll_y
+    global zoom_factor, scroll_x, scroll_y
     new_zoom_factor = zoom_factor * 1.1**amount
     scroll_x = zoom_center[0] - ((zoom_center[0]-scroll_x)/zoom_factor)*new_zoom_factor
     scroll_y = zoom_center[1] - ((zoom_center[1]-scroll_y)/zoom_factor)*new_zoom_factor

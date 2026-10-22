@@ -2,6 +2,8 @@ import pygame
 
 import config
 
+items = {}
+
 class Item:
     def __init__(self, name, image):
         self.name = name
@@ -15,10 +17,14 @@ class Item:
     def get_amount(self):
         return self.amount
 
-items = {}
+    def increment(self):
+        self.amount += 1
 
-def get_for_render():
-    return items.values()
+def get_for_render() -> list:
+    return list(items.values())
 
-gold = Item("gold", "gold.png")
-argon = Item("argon", "argon.png")
+def init_items():
+    # global items
+    global gold, argon
+    gold = Item("gold", "gold.png")
+    argon = Item("argon", "argon.png")

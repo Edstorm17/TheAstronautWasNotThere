@@ -3,7 +3,7 @@ import renderer
 from core.entity.entities import Entity
 from core.entity import entities
 import pygame
-
+from core.item import items
 from core.games.game1 import e
 
 arrow_down_counter_y = 0
@@ -64,12 +64,9 @@ class Keyboard:
         if key == pygame.K_SPACE:
             if entities.SHIP.get_pos() in e:
                 e.pop(entities.SHIP.get_pos()).delete()
-
+                items.gold.increment()
             else:
                 print("no rock")
-
-
-
 
     def key_up(self, key, mod, unicode, scancode):
         self.keys_down[key] = False

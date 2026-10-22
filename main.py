@@ -5,6 +5,7 @@ import config
 import input
 import renderer
 from ui import gui
+from core.item import items
 
 pygame.init()
 pygame.display.set_caption(config.TITLE)
@@ -13,12 +14,14 @@ screen = pygame.display.set_mode(config.WINDOW_SIZE)
 clock = pygame.time.Clock()
 ui_manager = pygame_gui.UIManager(config.WINDOW_SIZE, theme_path="assets/ui_assets/theme.json")
 
+items.init_items()
 renderer.init(screen)
 gui.init(ui_manager)
 
 running = True
 
 new_level(10)
+
 
 while running:
     time_delta = clock.tick(60)/1000

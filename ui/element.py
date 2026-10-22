@@ -1,8 +1,8 @@
 from pydoc import html
-import asyncio
+from typing import Callable
+from pygame.event import Event
 import pygame
 import pygame_gui
-from pygame import draw
 import re
 
 import renderer
@@ -20,7 +20,7 @@ color_index = {
 }
 
 class ElementWrapper:
-    def __init__(self, element_internal, event_funcs: dict, manager):
+    def __init__(self, element_internal, event_funcs: dict[int, Callable[[Event], bool]], manager):
         self.element_internal = element_internal
         self.event_funcs = event_funcs
         self.manager = manager
@@ -52,16 +52,17 @@ class CodeWindow(ElementWrapper):
         Button(relative_rect=pygame.Rect((100, 0), (50, 25)), text="scale", object_id="scale", manager=manager,container=self.jhg,click_func=None)
         manager.moving_elements.append((self.jhg, (300 - renderer.scroll_x, 100 - renderer.scroll_y), (260, 70)))
 
-    def on_click(self, event):
+    def on_click(self, event) -> bool:
         global focused
         if not is_mouse_over(self):
             focused = None
-            return
+            return False
         self.focused = True
         focused = self
         print("focused or not ")
+        return True
 
-    def on_key_down(self, event):
+    def on_key_down(self, event) -> bool:
         global focused
         if focused == self:
             print(event.unicode)
@@ -77,6 +78,7 @@ class CodeWindow(ElementWrapper):
                 focused.text += event.unicode
                 print(focused.text)
         draw_text()
+        return True
 
 def add_tags(tag, word):
     return "<%s>%s</%s>" % (tag, word, tag)

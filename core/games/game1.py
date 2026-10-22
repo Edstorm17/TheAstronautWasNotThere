@@ -12,8 +12,9 @@ def new_level(world_size):
     count = 0
     for i in range(world_size[0]):
         for j in range(world_size[1]):
-            curpos = (random.randint(0, 9), random.randint(0, 9))
-            e[curpos] = Rock(pos = curpos)
-            count +=1
+            if random.randint(0, 1):
+                curpos = (i, j)
+                e[curpos] = Rock(pos = curpos)
+                count +=1
 
 

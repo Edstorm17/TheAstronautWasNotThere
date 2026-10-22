@@ -21,16 +21,18 @@ class GUIManager:
         else:
             self.registered_events[event_id].append(element)
 
-    def handle_event(self, event):
+    def handle_event(self, event) -> bool:
+        ret = False
         if event.type in self.registered_events:
             for ele in self.registered_events[event.type]:
                 if hasattr(event, 'ui_element'):
                     if event.ui_element == ele.element_internal:
-                        ele.event_funcs[event.type](event)
+                        if ele.event_funcs[event.type](event):
+                            ret = True
                 else:
-                    ele.event_funcs[event.type](event)
-            return True
-        return False
+                    if ele.event_funcs[event.type](event):
+                        ret = True
+        return ret
 
 class GameGUIManager(GUIManager):
     def __init__(self, ui_manager):
@@ -76,9 +78,7 @@ game_gui_manager: GameGUIManager | None = None
 tree_gui_manager: TreeGUIManager  | None = None
 
 def init(ui_manager):
-    global game_gui_manager
-    global active_manager
-    global tree_gui_manager
+    global game_gui_manager, active_manager, tree_gui_manager
     game_gui_manager = GameGUIManager(ui_manager)
     tree_gui_manager = TreeGUIManager(ui_manager)
 
@@ -98,5 +98,4 @@ def is_mouse_over_element():
         for e, _, _ in active_manager.moving_elements:
             if e.rect.collidepoint(mouse_pos):
                 return True
-        return False
     return False
