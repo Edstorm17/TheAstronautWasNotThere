@@ -43,9 +43,9 @@ class GameGUIManager(GUIManager):
             CodeWindow(self)
 
         def on_tree_button_pressed(event):
-            global active_manager
-            active_manager = tree_gui_manager
-            active_manager.initialize()
+            global _active_manager
+            _active_manager = tree_gui_manager
+            _active_manager.initialize()
 
         Button(relative_rect=pygame.Rect((0, 0), (50, 50)), text="", object_id="#add_button", manager=self, click_func=on_add_button_pressed)
         Button(relative_rect=pygame.Rect((60, 0), (50, 50)), text="Tree", object_id="#tree", manager=self, click_func=on_tree_button_pressed)
@@ -73,29 +73,29 @@ class TreeGUIManager(GUIManager):
         from ui.tree import TreeWindow
         TreeWindow(self)
 
-active_manager: GUIManager | None = None
+_active_manager: GUIManager | None = None
 game_gui_manager: GameGUIManager | None = None
 tree_gui_manager: TreeGUIManager  | None = None
 
 def init(ui_manager):
-    global game_gui_manager, active_manager, tree_gui_manager
+    global game_gui_manager, _active_manager, tree_gui_manager
     game_gui_manager = GameGUIManager(ui_manager)
     tree_gui_manager = TreeGUIManager(ui_manager)
 
-    active_manager = game_gui_manager
+    _active_manager = game_gui_manager
 
 def current_manager():
-    global active_manager
-    return active_manager
+    global _active_manager
+    return _active_manager
 
 def update_moving_elements(scroll, scale=None):
-    if isinstance(active_manager, GameGUIManager):
-        active_manager.update_moving_elements(scroll, scale)
+    if isinstance(_active_manager, GameGUIManager):
+        _active_manager.update_moving_elements(scroll, scale)
 
 def is_mouse_over_element():
-    if isinstance(active_manager, GameGUIManager):
+    if isinstance(_active_manager, GameGUIManager):
         mouse_pos = pygame.mouse.get_pos()
-        for e, _, _ in active_manager.moving_elements:
+        for e, _, _ in _active_manager.moving_elements:
             if e.rect.collidepoint(mouse_pos):
                 return True
     return False
