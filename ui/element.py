@@ -1,16 +1,18 @@
+from pydoc import html
+
 import pygame
 import pygame_gui
 from pygame import draw
+import re
 
 import renderer
-
 focused = None
 text = ""
 lines = [""]
 box_x = 50
 box_y = 50
 
-line_height = 35
+line_height = 85
 windows: list[CodeWindow] = []
 color_index = {
     "def": (252,90,3),
@@ -27,8 +29,8 @@ class ElementWrapper:
 
 class CodeWindow(ElementWrapper):
     def __init__(self, manager):
-        self.width = 50
-        self.height = 50
+        self.width = 160
+        self.height = 70
         self.text = []
         self.text = ""
         self.cursor_position = 0
@@ -43,16 +45,17 @@ class CodeWindow(ElementWrapper):
         windows.append(self)
         print(windows)
 
-        # Button(relative_rect=pygame.Rect((0, 0), (50, 25)), text="play", object_id="play", manager=manager,container=jhg)
-        # Button(relative_rect=pygame.Rect((50, 0), (50, 25)), text="move", object_id="move", manager=manager,container=jhg)
-        # Button(relative_rect=pygame.Rect((100, 0), (50, 25)), text="scale", object_id="scale", manager=manager,container=jhg, click_func=lambda e: update_scaling_elements(jhg))
+        Button(relative_rect=pygame.Rect((0, 0), (50, 25)), text="play", object_id="play", manager=manager,container=self.jhg,click_func=None)
+        Button(relative_rect=pygame.Rect((50, 0), (50, 25)), text="move", object_id="move", manager=manager,container=self.jhg,click_func=None)
+        Button(relative_rect=pygame.Rect((100, 0), (50, 25)), text="scale", object_id="scale", manager=manager,container=self.jhg,click_func=None)
         manager.moving_elements.append((self.jhg, (300 - renderer.scroll_x, 100 - renderer.scroll_y), (260, 70)))
 
     def on_click(self, event):
+        global focused
         if not is_mouse_over(self):
+            focused = None
             return
         self.focused = True
-        global focused
         focused = self
         print("focused or not ")
 
@@ -77,26 +80,19 @@ def add_tags(tag, word):
 def draw_text():
     from ui.gui import GameGUIManager
     if focused is not None and isinstance(focused.manager, GameGUIManager):
-        mot = ""
-        for i in range(len(focused.text)):
-            p = focused.text
-            n = p[i]
-            if n != " ":
-                mot.join(n)
-            else:
-                for m in color_index.keys():
-                    print("mot caché")
-                    print(m)
-                    if mot == m:
+        p = html.escape(focused.text)
 
-                        pass
-                mot = ""
+        p = re.sub(
+            r'def\b',
+            '<font color="#FFA500">def</font>',
+            p
+        )
 
-
+        p = p.replace("\n", "<br>")
 
         text_box = pygame_gui.elements.UITextBox(
-            html_text= focused.text,
-            relative_rect= pygame.Rect((0, 0), (300, (360 + 50*focused.line_n))),
+            html_text= p,
+            relative_rect= pygame.Rect((0, 25), (300, (360 + 24*focused.line_n))),
             manager= focused.manager.manager,
             container= focused.jhg)
 
@@ -118,7 +114,8 @@ class Button(ElementWrapper):
     def __init__(self, relative_rect, text, object_id, manager, click_func, container=None):
         button = pygame_gui.elements.UIButton(relative_rect=relative_rect, text=text, object_id=object_id, manager=manager.manager, container=container)
         button.show()
-        super().__init__(button, {pygame_gui.UI_BUTTON_PRESSED: click_func}, manager)
+        if click_func is not None:
+            super().__init__(button, {pygame_gui.UI_BUTTON_PRESSED: click_func}, manager)
 
 
 def is_mouse_over(element: ElementWrapper):
