@@ -96,8 +96,12 @@ def update_moving_elements(scroll, scale=None):
     if isinstance(_active_manager, GameGUIManager):
         _active_manager.update_moving_elements(scroll, scale)
 
+def is_game_manager():
+    global _active_manager
+    return isinstance(_active_manager, GameGUIManager)
+
 def is_mouse_over_element():
-    if isinstance(_active_manager, GameGUIManager):
+    if is_game_manager():
         mouse_pos = pygame.mouse.get_pos()
         for e, _, _ in _active_manager.moving_elements:
             if e.rect.collidepoint(mouse_pos):

@@ -5,6 +5,7 @@ from core.entity import entities
 import pygame
 from core.item import items
 from core.games.game1 import e
+import ui.gui
 
 arrow_down_counter_y = 0
 arrow_down_counter_x = 0
@@ -33,7 +34,7 @@ class Mouse:
     def motion(self, pos, rel, buttons, touch):
         self.displacement = rel
 
-        if buttons[0]:
+        if buttons[0]: # and ui.gui.is_game_manager():
             renderer.scroll(rel)
 
 class Keyboard:
