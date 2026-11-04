@@ -1,6 +1,6 @@
 import pygame
 import pygame_gui
-from core.games.game1 import new_level
+from core.games.game1 import new_level, e
 import config
 import input
 import renderer
@@ -21,6 +21,7 @@ gui.init(ui_manager)
 running = True
 
 new_level(10)
+print(e)
 
 
 while running:

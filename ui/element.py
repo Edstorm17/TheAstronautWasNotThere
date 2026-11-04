@@ -10,7 +10,7 @@ focused = None
 text = ""
 lines = [""]
 box_x = 50
-box_y = 50
+box_y = 50 
 
 line_height = 85
 windows: list[CodeWindow] = []
@@ -28,6 +28,7 @@ class ElementWrapper:
         manager.register_events(self)
 
 class CodeWindow(ElementWrapper):
+    """This code makes codes windows to allow player to code in game. This class work with a Manager set by the ElementWrapper"""
     def __init__(self, manager):
         self.ww = 20
         self.space = 0

@@ -67,7 +67,8 @@ class Keyboard:
                 items.gold.increment()
             else:
                 print("no rock")
-
+            if len(e) == 0:
+                print("you win")
     def key_up(self, key, mod, unicode, scancode):
         self.keys_down[key] = False
 
