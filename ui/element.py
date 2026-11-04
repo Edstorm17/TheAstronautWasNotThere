@@ -30,7 +30,7 @@ class ElementWrapper:
 class CodeWindow(ElementWrapper):
     """This code makes codes windows to allow player to code in game. This class work with a Manager set by the ElementWrapper"""
     def __init__(self, manager):
-        self.ww = 20
+        self.lenght = {}
         self.space = 0
         self.width = 160
         self.height = 70
@@ -70,14 +70,28 @@ class CodeWindow(ElementWrapper):
             if event.key == pygame.K_BACKSPACE:
                 focused.text = focused.text[:-1]
                 focused.space += 1
+                focused.lenght[focused.line_n] -= 3
+
             elif event.key == 13:
                 print("entred")
-                focused.text += "\n"
+                print(focused.text[-1:])
+                if focused.text[-1::] == ":":
+                    print("deux points!")
+                    focused.text += "\n"
+                    focused.text += "    "
+
+                else:
+                    print("normal")
+                    focused.text += "\n"
                 focused.line_n += 1
-                focused.jhg.set_dimensions((focused.width+focused.ww, focused.height + 24* focused.line_n), clamp_to_container=True)
+                focused.lenght[focused.line_n] = 0
             else:
                 focused.text += event.unicode
+                focused.lenght[focused.line_n] += 3
                 print(focused.text)
+        if focused.lenght > focused.lenght_perm:
+            focused.lenght_perm = focused.lenght
+        focused.jhg.set_dimensions((focused.width + focused.lenght_perm, focused.height + 24 * focused.line_n),clamp_to_container=True)
         draw_text()
         return True
 
@@ -89,12 +103,12 @@ def draw_text():
     if focused is not None and isinstance(focused.manager, GameGUIManager):
         p = html.escape(focused.text)
         p = re.sub(r'def\b', '<font color="#FFA500">def</font>', p)
-        p = re.sub(r'(\w+)(?=\(\))', r'<font color="#004cff">\1</font>',p)
+        p = re.sub(r'(\w+)(?=\()', r'<font color="#004cff">\1</font>',p)
         p = p.replace("\n", "<br>")
 
         text_box = pygame_gui.elements.UITextBox(
             html_text= p,
-            relative_rect= pygame.Rect((0, 25), ((300+focused.ww), (360 + 24*focused.line_n))),
+            relative_rect= pygame.Rect((0, 25), ((300+focused.lenght_perm), (360 + 24*focused.line_n))),
             manager= focused.manager.manager,
             container= focused.jhg)
 
