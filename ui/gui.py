@@ -88,6 +88,10 @@ def current_manager():
     global _active_manager
     return _active_manager
 
+def reset_manager():
+    global _active_manager, game_gui_manager
+    _active_manager = game_gui_manager
+
 def update_moving_elements(scroll, scale=None):
     if isinstance(_active_manager, GameGUIManager):
         _active_manager.update_moving_elements(scroll, scale)

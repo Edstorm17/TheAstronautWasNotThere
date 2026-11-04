@@ -5,6 +5,7 @@ from ui import gui
 from core.entity import entities
 from config import TILE_SIZE
 from core.item import items
+import time
 
 SCREEN = None
 map_px_size = config.map_size*TILE_SIZE
@@ -73,6 +74,8 @@ def draw_game_layer(screen):
     for ship in entities.ships:
         draw_obj_gl(ship.image, ship.get_pos(), ship.dimensions)
 
+timeout_images = []
+
 def draw_ui_layer(screen):
     def draw_item(index, item):
         x = screen.get_width() - (index+1)*config.ITEM_SIZE
@@ -84,6 +87,16 @@ def draw_ui_layer(screen):
 
     for i, tem in enumerate(items.get_for_render()):
         draw_item(i, tem)
+
+    for img, timeout_time in timeout_images:
+        if time.time() > timeout_time:
+            timeout_images.remove((img, timeout_time))
+            continue
+
+        screen.blit(img, img.get_rect())
+
+def show(img, timeout):
+    timeout_images.append((img, time.time() + timeout))
 
 def draw_all():
     draw_background(SCREEN)
