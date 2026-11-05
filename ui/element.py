@@ -70,7 +70,6 @@ class CodeWindow(ElementWrapper):
     def on_click(self, event) -> bool:
         global focused
         if not is_mouse_over(self):
-            focused = None
             return False
         if self.move.element_internal.rect.collidepoint(pygame.mouse.get_pos()):
             self.moving = True
@@ -141,20 +140,6 @@ def draw_text():
             relative_rect= pygame.Rect((0, 25), ((300+focused.lenght[f"{max}"]), (360 + 24*focused.line_n))),
             manager= focused.manager.manager,
             container= focused.jhg)
-
-
-def set_focused(pos):
-    global focused
-    for window in windows:
-        if window.element_internal.rect.collidepoint(pos):
-            focused = window
-        else:
-            focused = None
-            return
-
-
-
-
 
 class Button(ElementWrapper):
     def __init__(self, relative_rect, text, object_id, manager, click_func=lambda e: False, container=None):
