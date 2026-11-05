@@ -13,7 +13,7 @@ box_y = 50
 timer = 0
 
 line_height = 85
-windows: list[CodeWindow] = []
+windows = []
 
 
 class ElementWrapper:
@@ -26,7 +26,7 @@ class ElementWrapper:
 class CodeWindow(ElementWrapper):
     """This code makes codes windows to allow player to code in game. This class work with a Manager set by the ElementWrapper"""
     def __init__(self, manager):
-        self.lenght = {"0":0,}
+        self.length = {"0":0,}
         self.space = 0
         self.width = 170
         self.height = 70
@@ -90,8 +90,8 @@ class CodeWindow(ElementWrapper):
                 else:
                     focused.text = focused.text[:-1]
                     print("remove thing")
-                if focused.lenght[f"{focused.line_n}"] > 0:
-                    focused.lenght[f"{focused.line_n}"] -= 3
+                if focused.length[f"{focused.line_n}"] > 0:
+                    focused.length[f"{focused.line_n}"] -= 3
 
             elif event.key == 13:
                 print("entred")
@@ -105,17 +105,17 @@ class CodeWindow(ElementWrapper):
                     print("normal")
                     focused.text += "\n"
                 focused.line_n += 1
-                focused.lenght[f"{focused.line_n}"] = 0
+                focused.length[f"{focused.line_n}"] = 0
             else:
                 focused.text += event.unicode
-                focused.lenght[f"{focused.line_n}"] += 3
+                focused.length[f"{focused.line_n}"] += 3
                 print(focused.text)
 
         max = 0
-        for i in range(len(focused.lenght)):
-            if focused.lenght[f"{max}"] < focused.lenght[f"{i}"]:
+        for i in range(len(focused.length)):
+            if focused.length[f"{max}"] < focused.length[f"{i}"]:
                 max = i
-        focused.jhg.set_dimensions((focused.width + focused.lenght[f"{max}"] ,focused.height + 24 * focused.line_n),clamp_to_container=True)
+        focused.jhg.set_dimensions((focused.width + focused.length[f"{max}"] ,focused.height + 24 * focused.line_n),clamp_to_container=True)
         draw_text()
         return True
 
@@ -126,8 +126,8 @@ def draw_text():
     global timer
     from ui.gui import GameGUIManager
     max = 0
-    for i in range(len(focused.lenght)):
-        if focused.lenght[f"{max}"] < focused.lenght[f"{i}"]:
+    for i in range(len(focused.length)):
+        if focused.length[f"{max}"] < focused.length[f"{i}"]:
             max = i
     if focused is not None and isinstance(focused.manager, GameGUIManager):
         p = html.escape(focused.text)
@@ -137,7 +137,7 @@ def draw_text():
 
         text_box = pygame_gui.elements.UITextBox(
             html_text= p,
-            relative_rect= pygame.Rect((0, 25), ((300+focused.lenght[f"{max}"]), (360 + 24*focused.line_n))),
+            relative_rect= pygame.Rect((0, 25), ((300+focused.length[f"{max}"]), (360 + 24*focused.line_n))),
             manager= focused.manager.manager,
             container= focused.jhg)
 
