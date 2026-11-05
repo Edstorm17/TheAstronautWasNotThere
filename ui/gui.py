@@ -12,7 +12,7 @@ class GUIManager:
         pass
 
     def register_events(self, element: ElementWrapper):
-        for k in element.event_funcs.keys():
+        for k in {k: v for k, v in element.event_funcs.items() if v}.keys():
             self.register_event(k, element)
 
     def register_event(self, event_id, element: ElementWrapper):

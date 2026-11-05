@@ -21,7 +21,6 @@ class ElementWrapper:
         self.element_internal = element_internal
         self.event_funcs = event_funcs
         self.manager = manager
-        self.event_funcs = event_funcs
         manager.register_events(self)
 
 class CodeWindow(ElementWrapper):
@@ -31,12 +30,10 @@ class CodeWindow(ElementWrapper):
         self.space = 0
         self.width = 170
         self.height = 70
-        self.text = []
         self.text = ""
         self.cursor_position = 0
         self.focused = False
         self.line_n = 0
-        print(windows)
         self.jhg = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0, 20), (self.width, self.height + 100*self.line_n)), manager=manager.manager)
         self.move = Button(relative_rect=pygame.Rect((50, 0), (50, 25)), text="move", object_id="move", manager=manager, container=self.jhg, click_func=None)
         self.moving = False
@@ -48,11 +45,14 @@ class CodeWindow(ElementWrapper):
             pygame.MOUSEMOTION: self.on_motion
         }, manager)
         windows.append(self)
-        print(windows)
 
-        Button(relative_rect=pygame.Rect((0, 0), (50, 25)), text="play", object_id="play", manager=manager, container=self.jhg, click_func=None)
+        Button(relative_rect=pygame.Rect((0, 0), (50, 25)), text="play", object_id="play", manager=manager, container=self.jhg, click_func=self.test)
         Button(relative_rect=pygame.Rect((100, 0), (50, 25)), text="scale", object_id="scale", manager=manager, container=self.jhg, click_func=None)
         manager.moving_elements.append((self.jhg, (300 - renderer.scroll_x, 100 - renderer.scroll_y), (260, 70)))
+
+    def test(self, e):
+        print("Clicked!")
+        return False
 
     def on_motion(self, event) -> bool:
         if self.moving:
@@ -65,7 +65,7 @@ class CodeWindow(ElementWrapper):
 
     def on_up(self, event) -> bool:
         self.moving = False
-        return True
+        return False
 
     def on_click(self, event) -> bool:
         global focused
@@ -76,7 +76,7 @@ class CodeWindow(ElementWrapper):
             self.moving = True
         self.focused = True
         focused = self
-        return True
+        return False
 
     def on_key_down(self, event) -> bool:
         global max
