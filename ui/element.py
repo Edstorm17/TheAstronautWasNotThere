@@ -122,6 +122,12 @@ class CodeWindow(ElementWrapper):
 
 
 def draw_text():
+    """C'est le renderer de texte qui va ajouter le code html au texte
+    \n
+    Il handle entre autre:
+    - colorie les fonctions
+    - colorie les noms de fonctions
+    """
     global timer
     from ui.gui import GameGUIManager
     max = 0
