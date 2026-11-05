@@ -13,7 +13,7 @@ box_y = 50
 timer = 0
 
 line_height = 85
-windows: list[CodeWindow] = []
+windows = []
 
 
 class ElementWrapper:
@@ -92,33 +92,26 @@ class CodeWindow(ElementWrapper):
                     focused.text = focused.text[:-1]
                     print("remove thing")
                 if focused.lenght[f"{focused.line_n}"] > 0:
-                    focused.lenght[f"{focused.line_n}"] -= 3
+                    focused.lenght[f"{focused.line_n}"] -= 4
 
             elif event.key == 13:
                 print("entred")
                 print(focused.text[-1:])
-                if focused.text[-1::] == ":":
-                    print("deux points!")
-                    focused.text += "\n"
-                    focused.text += "    "
-
-                else:
-                    print("normal")
-                    focused.text += "\n"
+                focused.text += "\n"
                 focused.line_n += 1
                 focused.lenght[f"{focused.line_n}"] = 0
             else:
                 focused.text += event.unicode
-                focused.lenght[f"{focused.line_n}"] += 3
+                focused.lenght[f"{focused.line_n}"] += 4
                 print(focused.text)
 
-        max = 0
-        for i in range(len(focused.lenght)):
-            if focused.lenght[f"{max}"] < focused.lenght[f"{i}"]:
-                max = i
-        focused.jhg.set_dimensions((focused.width + focused.lenght[f"{max}"] ,focused.height + 24 * focused.line_n),clamp_to_container=True)
-        draw_text()
-        return True
+            max = 0
+            for i in range(len(focused.lenght)):
+                if focused.lenght[f"{max}"] < focused.lenght[f"{i}"]:
+                    max = i
+            focused.jhg.set_dimensions((focused.width + focused.lenght[f"{max}"] ,focused.height + 24 * focused.line_n),clamp_to_container=True)
+            draw_text()
+            return True
 
 def add_tags(tag, word):
     return "<%s>%s</%s>" % (tag, word, tag)
@@ -140,6 +133,7 @@ def draw_text():
             html_text= p,
             relative_rect= pygame.Rect((0, 25), ((300+focused.lenght[f"{max}"]), (360 + 24*focused.line_n))),
             manager= focused.manager.manager,
+            font="monospace",
             container= focused.jhg)
 
 
@@ -148,9 +142,8 @@ def set_focused(pos):
     for window in windows:
         if window.element_internal.rect.collidepoint(pos):
             focused = window
-        else:
-            focused = None
-            return
+
+        focused = None
 
 
 
