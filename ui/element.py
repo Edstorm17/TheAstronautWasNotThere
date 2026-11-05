@@ -79,6 +79,12 @@ class CodeWindow(ElementWrapper):
         return False
 
     def on_key_down(self, event) -> bool:
+        """C'est le moyen de mettre le text entré par l'utilisateur dans la text box
+        \n il handle
+        - les backspace
+        - les touches enter
+        - toutes les lettres et nombres
+        """
         global max
         global focused
         if focused == self:
@@ -94,6 +100,7 @@ class CodeWindow(ElementWrapper):
                 if focused.lenght[f"{focused.line_n}"] > 0:
                     focused.lenght[f"{focused.line_n}"] -= 4
 
+            # la clé enter est pris en compte pour faire une nouvelle ligne
             elif event.key == 13:
                 print("entred")
                 print(focused.text[-1:])
@@ -113,8 +120,6 @@ class CodeWindow(ElementWrapper):
             draw_text()
             return True
 
-def add_tags(tag, word):
-    return "<%s>%s</%s>" % (tag, word, tag)
 
 def draw_text():
     global timer
@@ -135,19 +140,6 @@ def draw_text():
             manager= focused.manager.manager,
             font="monospace",
             container= focused.jhg)
-
-
-def set_focused(pos):
-    global focused
-    for window in windows:
-        if window.element_internal.rect.collidepoint(pos):
-            focused = window
-
-        focused = None
-
-
-
-
 
 class Button(ElementWrapper):
     def __init__(self, relative_rect, text, object_id, manager, click_func=lambda e: False, container=None):
