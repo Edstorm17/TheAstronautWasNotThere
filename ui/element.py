@@ -4,21 +4,17 @@ from pygame.event import Event
 import pygame
 import pygame_gui
 import re
-import input
-
 import renderer
 focused = None
 text = ""
 lines = [""]
 box_x = 50
-box_y = 50 
+box_y = 50
+timer = 0
 
 line_height = 85
 windows: list[CodeWindow] = []
-color_index = {
-    "def": (252,90,3),
 
-}
 
 class ElementWrapper:
     def __init__(self, element_internal, event_funcs: dict[int, Callable[[Event], bool]], manager):
@@ -31,9 +27,9 @@ class ElementWrapper:
 class CodeWindow(ElementWrapper):
     """This code makes codes windows to allow player to code in game. This class work with a Manager set by the ElementWrapper"""
     def __init__(self, manager):
-        self.lenght = {}
+        self.lenght = {"0":0,}
         self.space = 0
-        self.width = 160
+        self.width = 170
         self.height = 70
         self.text = []
         self.text = ""
@@ -83,13 +79,20 @@ class CodeWindow(ElementWrapper):
         return True
 
     def on_key_down(self, event) -> bool:
+        global max
         global focused
         if focused == self:
             print(event.unicode)
             if event.key == pygame.K_BACKSPACE:
-                focused.text = focused.text[:-1]
-                focused.space += 1
-                focused.lenght[focused.line_n] -= 3
+                if focused.text[-1:] == "\n":
+                    focused.text = focused.text[0:-1]
+                    focused.line_n -= 1
+                    print("remove line ")
+                else:
+                    focused.text = focused.text[:-1]
+                    print("remove thing")
+                if focused.lenght[f"{focused.line_n}"] > 0:
+                    focused.lenght[f"{focused.line_n}"] -= 3
 
             elif event.key == 13:
                 print("entred")
@@ -103,14 +106,17 @@ class CodeWindow(ElementWrapper):
                     print("normal")
                     focused.text += "\n"
                 focused.line_n += 1
-                focused.lenght[focused.line_n] = 0
+                focused.lenght[f"{focused.line_n}"] = 0
             else:
                 focused.text += event.unicode
-                focused.lenght[focused.line_n] += 3
+                focused.lenght[f"{focused.line_n}"] += 3
                 print(focused.text)
-        if focused.lenght > focused.lenght_perm:
-            focused.lenght_perm = focused.lenght
-        focused.jhg.set_dimensions((focused.width + focused.lenght_perm, focused.height + 24 * focused.line_n),clamp_to_container=True)
+
+        max = 0
+        for i in range(len(focused.lenght)):
+            if focused.lenght[f"{max}"] < focused.lenght[f"{i}"]:
+                max = i
+        focused.jhg.set_dimensions((focused.width + focused.lenght[f"{max}"] ,focused.height + 24 * focused.line_n),clamp_to_container=True)
         draw_text()
         return True
 
@@ -118,7 +124,12 @@ def add_tags(tag, word):
     return "<%s>%s</%s>" % (tag, word, tag)
 
 def draw_text():
+    global timer
     from ui.gui import GameGUIManager
+    max = 0
+    for i in range(len(focused.lenght)):
+        if focused.lenght[f"{max}"] < focused.lenght[f"{i}"]:
+            max = i
     if focused is not None and isinstance(focused.manager, GameGUIManager):
         p = html.escape(focused.text)
         p = re.sub(r'def\b', '<font color="#FFA500">def</font>', p)
@@ -127,7 +138,7 @@ def draw_text():
 
         text_box = pygame_gui.elements.UITextBox(
             html_text= p,
-            relative_rect= pygame.Rect((0, 25), ((300+focused.lenght_perm), (360 + 24*focused.line_n))),
+            relative_rect= pygame.Rect((0, 25), ((300+focused.lenght[f"{max}"]), (360 + 24*focused.line_n))),
             manager= focused.manager.manager,
             container= focused.jhg)
 
