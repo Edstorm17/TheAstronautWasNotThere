@@ -4,7 +4,12 @@ from pygame.event import Event
 import pygame
 import pygame_gui
 import re
+import threading
 import renderer
+import time
+from entity import entities
+from core.entity import entities
+from core.entity.entities import Entity
 focused = None
 text = ""
 lines = [""]
@@ -51,8 +56,67 @@ class CodeWindow(ElementWrapper):
         manager.moving_elements.append((self.jhg, (300 - renderer.scroll_x, 100 - renderer.scroll_y), (260, 70)))
 
     def test(self, e):
-        print("Clicked!")
+        import logging
+        log = logging.getLogger(__name__)
+
+        directions = {"up": (0, 1), "down": (0, -1), "left": (-1, 0), "right": (1, 0)}
+        max_steps = 100
+        steps = []
+        errors = []
+
+        text = getattr(self, "text", None)
+        source = text.replace("\\n", "\n")
+
+        for lineno, raw in enumerate(source.splitlines(), start=1):
+            line = raw.split(";")[0].split("#")[0].strip().lower()
+            if not line:
+                continue
+            tokens = line.replace(",", " ").split()
+            op, args = tokens[0], tokens[1:]
+            #la c pour les instructions
+            if op != "mv":
+                errors.append((lineno, f"c quoi ca??? :  '{op}'"))
+                continue
+            if not args:
+                errors.append((lineno, "mv a besoin de direction"))
+                continue
+
+            i = 0
+            while i < len(args):
+                direction = args[i]
+                i += 1
+                if direction not in directions:
+                    errors.append((lineno, f"mauvaise dirs '{direction}'"))
+                    break
+                count = 1
+                if i < len(args) and args[i].isdigit():
+                    count = int(args[i])
+                    i += 1
+                steps.extend([directions[direction]] * count)
+
+            if len(steps) > max_steps:
+                errors.append((lineno, f"too fat steps {max_steps} "))
+                break
+
+
+
+        if errors:
+            for lineno, message in errors:
+                log.error("erreur", lineno, message)
+            return False
+        if not steps:
+            log.info("rien a execute")
+            return False
+
+        def run():
+            for step in steps:
+                entities.SHIP.move(step)
+                time.sleep(0.67)
+
+        threading.Thread(target=run, daemon=True).start()
         return False
+
+
 
     def on_motion(self, event) -> bool:
         if self.moving:
