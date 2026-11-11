@@ -11,6 +11,8 @@ import time
 from entity import entities
 from core.entity import entities
 from core.entity.entities import Entity
+from games import tick_processor
+
 focused = None
 text = ""
 lines = [""]
@@ -56,7 +58,7 @@ class CodeWindow(ElementWrapper):
         Button(relative_rect=pygame.Rect((100, 0), (50, 25)), text="scale", object_id="scale", manager=manager, container=self.jhg, click_func=None)
         manager.moving_elements.append((self.jhg, (300 - renderer.scroll_x, 100 - renderer.scroll_y), (260, 70)))
 
-    def test(self, e):
+    def test(self, e) -> bool:
 
         log = logging.getLogger(__name__)
 
@@ -99,8 +101,6 @@ class CodeWindow(ElementWrapper):
                 errors.append((lineno, f"too fat steps {max_steps} "))
                 break
 
-
-
         if errors:
             for lineno, message in errors:
                 log.error("erreur", lineno, message)
@@ -109,15 +109,11 @@ class CodeWindow(ElementWrapper):
             log.info("rien a execute")
             return False
 
-        def run():
-            for step in steps:
-                entities.SHIP.move(step)
-                time.sleep(0.67)
+        tick_processor.new_processor().append_processes(
+            [lambda: entities.SHIP.move(step) for step in steps]
+        )
 
-        threading.Thread(target=run, daemon=True).start()
-        return False
-
-
+        return True
 
     def on_motion(self, event) -> bool:
         if self.moving:
