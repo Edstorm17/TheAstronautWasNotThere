@@ -8,7 +8,6 @@ def new_level(world_size):
     world_size = [world_size, world_size]
     print("level 1 loaded")
 
-
     count = 0
     for i in range(world_size[0]):
         for j in range(world_size[1]):

@@ -6,13 +6,11 @@ import pygame
 import pygame_gui
 import re
 import logging
-import threading
 import renderer
-import time
-from entity import entities
 from core.entity import entities
-from core.entity.entities import Entity
 from games import tick_processor
+from core.games.game1 import e as rocks
+from core.item import items
 
 focused = None
 text = ""
@@ -96,9 +94,16 @@ class CodeWindow(ElementWrapper):
                     if steps > max_steps:
                         errors.append((lineno, f"too fat steps {steps}, max {max_steps}"))
                         break
-                    print(direction)
                     processor.append_processes([partial(lambda d: entities.SHIP.move(d), directions[direction]) for _ in range(steps)])
+                case 'harv':
+                    if len(args) != 0:
+                        errors.append((lineno, "harv a besoin d'aucun arguments"))
+                    def harvest():
+                        if entities.SHIP.get_pos() in rocks:
+                            rocks.pop(entities.SHIP.get_pos()).delete()
+                            items.gold.increment()
 
+                    processor.append_process(lambda: harvest())
                 case _:
                     errors.append((lineno, f"c quoi ca??? :  '{op}'"))
                     continue

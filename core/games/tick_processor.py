@@ -9,7 +9,7 @@ class TickProcessor:
         self.last_call = time.time() - process_delay
 
     def append_process(self, process: Callable):
-        self._process_queue.append(Callable)
+        self._process_queue.append(process)
 
     def append_processes(self, processes: Iterable[Callable]):
         self._process_queue.extend(processes)
