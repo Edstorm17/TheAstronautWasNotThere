@@ -1,12 +1,12 @@
 import pygame
 import pygame_gui
-from core.games.game2 import new_level2, g
+from core.games.game1 import new_level, e
 import config
 import input
 import renderer
-from ui import gui
+from ui import gui, element
 from core.item import items
-import tick_processor
+from games import tick_processor
 
 pygame.init()
 pygame.display.set_caption(config.TITLE)
@@ -21,8 +21,8 @@ gui.init(ui_manager)
 timer = 0
 running = True
 
-new_level2(10)
-print(g)
+new_level(10)
+print(e)
 
 while running:
     time_delta = clock.tick(60)/1000
