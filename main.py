@@ -4,7 +4,7 @@ from core.games.game1 import new_level, e
 import config
 import input
 import renderer
-from ui import gui
+from ui import gui, element
 from core.item import items
 
 pygame.init()
@@ -17,7 +17,7 @@ ui_manager = pygame_gui.UIManager(config.WINDOW_SIZE, theme_path="assets/ui_asse
 items.init_items()
 renderer.init(screen)
 gui.init(ui_manager)
-
+timer = 0
 running = True
 
 new_level(10)
@@ -44,7 +44,6 @@ while running:
                     input.keyboard.key_up(event.key, event.mod, event.unicode, event.scancode)
 
     ui_manager.update(time_delta)
-
     renderer.draw_all()
     ui_manager.draw_ui(screen)
 
