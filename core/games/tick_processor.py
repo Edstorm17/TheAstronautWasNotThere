@@ -14,6 +14,9 @@ class TickProcessor:
     def append_processes(self, processes: Iterable[Callable]):
         self._process_queue.extend(processes)
 
+    def clear_processes(self):
+        self._process_queue.clear()
+
     def process_next(self):
         if len(self._process_queue) > 0 and self.last_call + process_delay <= time.time():
             self._process_queue.pop(0)()
