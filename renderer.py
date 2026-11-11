@@ -31,7 +31,7 @@ def scroll(delta):
 
 def zoom(amount, zoom_center):
     global zoom_factor, scroll_x, scroll_y
-    new_zoom_factor = zoom_factor * 1.1**amount
+    new_zoom_factor = min(max(zoom_factor * 1.1**amount, 0.5),3)
     scroll_x = zoom_center[0] - ((zoom_center[0]-scroll_x)/zoom_factor)*new_zoom_factor
     scroll_y = zoom_center[1] - ((zoom_center[1]-scroll_y)/zoom_factor)*new_zoom_factor
     zoom_factor = new_zoom_factor
