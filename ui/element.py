@@ -5,13 +5,9 @@ import pygame
 import pygame_gui
 import re
 import logging
-import threading
 import renderer
-import time
-from entity import entities
 from core.entity import entities
-from core.entity.entities import Entity
-from games import tick_processor
+import tick_processor
 
 focused = None
 text = ""

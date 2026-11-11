@@ -1,3 +1,4 @@
+import pygame
 import config
 import renderer
 from core.entity.entities import Entity
@@ -70,6 +71,8 @@ class Keyboard:
                 print("no rock")
             if len(e) == 0:
                 print("you win")
+                g = pygame.image.load('assets/world_assets/press.png')
+                renderer.win(g)
     def key_up(self, key, mod, unicode, scancode):
         self.keys_down[key] = False
 

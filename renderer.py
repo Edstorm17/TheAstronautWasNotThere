@@ -97,6 +97,8 @@ def draw_ui_layer(screen):
 
 def show(img, timeout):
     timeout_images.append((img, time.time() + timeout))
+def win(g):
+    SCREEN.blit(g)
 
 def draw_all():
     draw_background(SCREEN)

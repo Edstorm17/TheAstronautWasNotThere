@@ -45,7 +45,7 @@ class Ship(Entity):
 
 #rocks have 3 states: fresh, crackled, destroyed
 #the player can get the rock position and type, the type deetermines the hardness of the rock
-class Rock(Entity):
+class Argon(Entity):
     def __init__(self, pos):
         super().__init__("argon_item.png", pos)
         self.name = "rock"
@@ -61,6 +61,26 @@ class Rock(Entity):
         return self.type
     def hardness(self):
         return self.hardness
+class Gold(Entity):
+        def __init__(self, pos):
+            super().__init__("gold_item.png", pos)
+            self.name = "gold"
+
+            self.state = states[random.randint(0, 2)]
+            self.type = types[random.randint(0, 2)]
+            self.hardness = random.randint(1, 10)
+
+        def pos(self):
+            return self.pos
+
+        def state(self):
+            return self.state
+
+        def type(self):
+            return self.type
+
+        def hardness(self):
+            return self.hardness
 
 
 class Wall(Entity):
