@@ -21,6 +21,11 @@ timer = 0
 
 line_height = 85
 windows = []
+colors = {
+    "#FFA500": ["harv","mv","jump"],
+    "#00FF00": ["up","down","left","right"],
+    "#0000FF": ["1","2","3","4","5","6","7","8","9"],
+}
 
 
 class ElementWrapper:
@@ -94,6 +99,7 @@ class CodeWindow(ElementWrapper):
                     if steps > max_steps:
                         errors.append((lineno, f"too fat steps {steps}, max {max_steps}"))
                         break
+                   #print(direction)
                     processor.append_processes([partial(lambda d: entities.SHIP.move(d), directions[direction]) for _ in range(steps)])
                 case 'harv':
                     if len(args) != 0:
@@ -148,12 +154,10 @@ class CodeWindow(ElementWrapper):
         global max
         global focused
         if focused == self:
-            print(event.unicode)
             if event.key == pygame.K_BACKSPACE:
                 if focused.text[-1:] == "\n":
                     focused.text = focused.text[0:-1]
                     focused.line_n -= 1
-                    print("remove line ")
                 else:
                     focused.text = focused.text[:-1]
                     print("remove thing")
@@ -162,8 +166,7 @@ class CodeWindow(ElementWrapper):
 
             # la clé enter est pris en compte pour faire une nouvelle ligne
             elif event.key == 13:
-                print("entred")
-                print(focused.text[-1:])
+                #print(focused.text[-1:])
                 focused.text += "\n"
                 focused.line_n += 1
                 focused.lenght[f"{focused.line_n}"] = 0
@@ -172,7 +175,7 @@ class CodeWindow(ElementWrapper):
 
                     focused.text += event.unicode
                     focused.lenght[f"{focused.line_n}"] += 4
-                    print(focused.text)
+                    #print(focused.text)
 
             max = 0
             for i in range(len(focused.lenght)):
@@ -198,7 +201,9 @@ def draw_text():
             max = i
     if focused is not None and isinstance(focused.manager, GameGUIManager):
         p = html.escape(focused.text)
-        p = re.sub(r'def\b', '<font color="#FFA500">def</font>', p)
+        for mot in colors:
+            for i in colors[mot]:
+                p = re.sub(fr'{i}\b', f'<font color="{mot}">{i}</font>', p)
         p = re.sub(r'(\w+)(?=\()', r'<font color="#004cff">\1</font>',p)
         p = p.replace("\n", "<br>")
 
