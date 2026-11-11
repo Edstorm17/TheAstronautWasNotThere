@@ -1,3 +1,4 @@
+from functools import partial
 from pydoc import html
 from typing import Callable
 from pygame.event import Event
@@ -64,11 +65,12 @@ class CodeWindow(ElementWrapper):
 
         directions = {"up": (0, 1), "down": (0, -1), "left": (-1, 0), "right": (1, 0)}
         max_steps = 100
-        steps = []
         errors = []
 
         text = getattr(self, "text", None)
         source = text.replace("\\n", "\n")
+
+        processor = tick_processor.new_processor()
 
         for lineno, raw in enumerate(source.splitlines(), start=1):
             line = raw.split(";")[0].split("#")[0].strip().lower()
@@ -77,41 +79,34 @@ class CodeWindow(ElementWrapper):
             tokens = line.replace(",", " ").split()
             op, args = tokens[0], tokens[1:]
             #la c pour les instructions
-            if op != "mv":
-                errors.append((lineno, f"c quoi ca??? :  '{op}'"))
-                continue
-            if not args:
-                errors.append((lineno, "mv a besoin de direction"))
-                continue
 
-            i = 0
-            while i < len(args):
-                direction = args[i]
-                i += 1
-                if direction not in directions:
-                    errors.append((lineno, f"mauvaise dirs '{direction}'"))
-                    break
-                count = 1
-                if i < len(args) and args[i].isdigit():
-                    count = int(args[i])
-                    i += 1
-                steps.extend([directions[direction]] * count)
+            match op:
+                case 'mv':
+                    if len(args) != 2:
+                        errors.append((lineno, "mv a besoin de deux arguments (direction, int)"))
+                        break
+                    direction = args[0]
+                    if direction not in directions:
+                        errors.append((lineno, f"mauvaise dirs '{direction}'"))
+                        break
+                    if not args[1].isdigit():
+                        errors.append((lineno, f"le deuxième argument doit être un nombre entier"))
+                        break
+                    steps = int(args[1])
+                    if steps > max_steps:
+                        errors.append((lineno, f"too fat steps {steps}, max {max_steps}"))
+                        break
+                    print(direction)
+                    processor.append_processes([partial(lambda d: entities.SHIP.move(d), directions[direction]) for _ in range(steps)])
 
-            if len(steps) > max_steps:
-                errors.append((lineno, f"too fat steps {max_steps} "))
-                break
+                case _:
+                    errors.append((lineno, f"c quoi ca??? :  '{op}'"))
+                    continue
 
         if errors:
             for lineno, message in errors:
                 log.error("erreur", lineno, message)
             return False
-        if not steps:
-            log.info("rien a execute")
-            return False
-
-        tick_processor.new_processor().append_processes(
-            [lambda: entities.SHIP.move(step) for step in steps]
-        )
 
         return True
 
