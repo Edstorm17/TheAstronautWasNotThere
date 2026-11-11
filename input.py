@@ -6,6 +6,7 @@ from core.entity import entities
 import pygame
 from core.item import items
 from core.games.game1 import e
+from core.math_utils import Vec2
 import ui.gui
 
 arrow_down_counter_y = 0
@@ -16,10 +17,10 @@ arrow_down_counter_x = 0
 class Mouse:
     def __init__(self):
         self.buttons_down = [False]*3
-        self.displacement = (0, 0)
-        self.mousewheel = (0, 0)
+        self.displacement = Vec2()
+        self.mousewheel = Vec2()
 
-    def button_down(self, pos, button, touch):
+    def button_down(self, pos: Vec2, button, touch):
         match button:
             case 1 | 2 | 3:
                 self.buttons_down[button-1] = True
@@ -28,11 +29,11 @@ class Mouse:
             case 5:
                 renderer.zoom(-1, pos)
 
-    def button_up(self, pos, button, touch):
+    def button_up(self, pos: Vec2, button, touch):
         if button <= 3:
             self.buttons_down[button-1] = False
 
-    def motion(self, pos, rel, buttons, touch):
+    def motion(self, pos: Vec2, rel : Vec2, buttons, touch):
         self.displacement = rel
 
         if buttons[0]: # and ui.gui.is_game_manager():
@@ -48,22 +49,23 @@ class Keyboard:
         global arrow_down_counter_y
         global arrow_down_counter_x
         if key == pygame.K_UP:#up
-            entities.SHIP.move((0, 1))
+            entities.SHIP.move(Vec2(0, 1))
 
 
         if key == pygame.K_RIGHT:# right arrow
 
-            entities.SHIP.move((1, 0))
+            entities.SHIP.move(Vec2(1,0))
 
         if key == pygame.K_LEFT: #left arrow
 
-            entities.SHIP.move((-1, 0))
+            entities.SHIP.move(Vec2(-1, 0))
 
 
         if key == pygame.K_DOWN:#down arrow
-            entities.SHIP.move((0, -1))
+            entities.SHIP.move(Vec2(0, -1))
 
         if key == pygame.K_SPACE:
+            print(e)
             if entities.SHIP.get_pos() in e:
                 e.pop(entities.SHIP.get_pos()).delete()
                 items.gold.increment()

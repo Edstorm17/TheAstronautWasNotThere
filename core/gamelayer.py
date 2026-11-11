@@ -1,26 +1,24 @@
 import pygame
 from pygame.sprite import Sprite
-
+from core.math_utils import Vec2
 import config
 
 
 class GameObject(Sprite):
-    def __init__(self, image, pos, dimensions):
+    def __init__(self, image, pos: Vec2, dimensions : Vec2):
         super().__init__()
 
 
         self.dimensions = dimensions
-        self.x = pos[0]
-        self.y = pos[1]
+        self.pos: Vec2  = pos
 
-        raw_img = pygame.image.load(f"assets/world_assets/{image}")
-        self.image = pygame.transform.scale(raw_img, (config.TILE_SIZE*dimensions[0], config.TILE_SIZE*dimensions[1]))
+        raw_img = pygame.image.load(f"./assets/world_assets/{image}")
+        self.image = pygame.transform.scale(raw_img, (config.TILE_SIZE * dimensions.x, config.TILE_SIZE*dimensions.y))
         self.rect = self.image.get_rect()
 
-    def get_pos(self):
-        return self.x, self.y
+    def get_pos(self) -> Vec2:
+        return self.pos
 
     def set_pos(self, pos):
-        self.x = pos[0]
-        self.y = pos[1]
+        self.pos = pos
 

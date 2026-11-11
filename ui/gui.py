@@ -1,7 +1,7 @@
 import pygame
 
 from ui.element import ElementWrapper, CodeWindow, Button
-
+from core.math_utils import Vec2
 
 class GUIManager:
     def __init__(self, ui_manager):
@@ -50,13 +50,15 @@ class GameGUIManager(GUIManager):
         Button(relative_rect=pygame.Rect((0, 0), (50, 50)), text="", object_id="#add_button", manager=self, click_func=on_add_button_pressed)
         Button(relative_rect=pygame.Rect((60, 0), (50, 50)), text="Tree", object_id="#tree", manager=self, click_func=on_tree_button_pressed)
 
-    def update_moving_elements(self, scroll, scale=None):
+    def update_moving_elements(self, scroll_factor: Vec2, scale=None):
         for e, p, s in self.moving_elements:
-            e.set_position((p[0] + scroll[0], p[1] + scroll[1]))
+            e.set_position(tuple(p + scroll_factor))
             if scale:
-                e.set_dimensions((s[0] * scale, s[1] * scale))
+                print(type(s))
+                print(type(scale))
+                e.set_dimensions(tuple(s * scale))
                 for child in e.get_container().elements:
-                    child.set_dimensions((s[0] * scale, s[1] * scale), clamp_to_container=False)
+                    child.set_dimensions(tuple(s * scale), clamp_to_container=False)
 
     def is_mouse_over_element(self):
         mouse_pos = pygame.mouse.get_pos()

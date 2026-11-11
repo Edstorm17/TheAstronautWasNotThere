@@ -6,36 +6,33 @@ from core.entity import entities
 from config import TILE_SIZE
 from core.item import items
 import time
+from core.math_utils import Vec2
 
 SCREEN = None
 map_px_size = config.map_size*TILE_SIZE
 world_surface = pygame.Surface((map_px_size, map_px_size))
-scroll_x = 0
-scroll_y = 0
+scroll_factor = Vec2()
 zoom_factor = 1
 font = None
 
 def init(screen):
-    global SCREEN, scroll_x, scroll_y, font
+    global SCREEN, scroll_factor, font
 
     SCREEN = screen
-    scroll_x = screen.get_width()//2 - map_px_size//2
-    scroll_y = screen.get_height()//2 - map_px_size//2
+    scroll_factor = Vec2(screen.get_width()//2, screen.get_height()//2) - map_px_size//2
     font = pygame.font.SysFont(None, 50)
 
-def scroll(delta):
-    global scroll_x, scroll_y
-    scroll_x += delta[0]
-    scroll_y += delta[1]
-    gui.update_moving_elements((scroll_x, scroll_y))
+def scroll(delta: Vec2):
+    global scroll_factor
+    scroll_factor += delta
+    gui.update_moving_elements(scroll_factor)
 
-def zoom(amount, zoom_center):
-    global zoom_factor, scroll_x, scroll_y
+def zoom(amount, zoom_center: Vec2):
+    global zoom_factor, scroll_factor
     new_zoom_factor = min(max(zoom_factor * 1.1**amount, 0.5),3)
-    scroll_x = zoom_center[0] - ((zoom_center[0]-scroll_x)/zoom_factor)*new_zoom_factor
-    scroll_y = zoom_center[1] - ((zoom_center[1]-scroll_y)/zoom_factor)*new_zoom_factor
+    scroll_factor = zoom_center - ((zoom_center-scroll_factor)/zoom_factor) * new_zoom_factor
     zoom_factor = new_zoom_factor
-    gui.update_moving_elements((scroll_x, scroll_y), scale=zoom_factor)
+    gui.update_moving_elements(scroll_factor, scale=zoom_factor)
 j = pygame.image.load('assets/ui_assets/background.png')
 def draw_background(screen):
     screen.blit(j)
@@ -49,12 +46,9 @@ def draw_game_layer(screen):
                 color
             )
 
-    def draw_obj_gl(img, pos, dimensions):
+    def draw_obj_gl(img, pos: Vec2, dimensions):
         rect = img.get_rect()
-
-        x = pos[0]*TILE_SIZE
-        y = screen.get_height()-pos[1]*TILE_SIZE
-        rect.bottomleft = (x, y)
+        rect.bottomleft = (pos.x * TILE_SIZE, screen.get_height()-pos.y*TILE_SIZE)
 
         screen.blit(img, rect)
 
@@ -64,7 +58,7 @@ def draw_game_layer(screen):
 
         for row in range(size):
             for col in range(size):
-                draw_obj_gl(ground_image, (col, row), (size, size))
+                draw_obj_gl(ground_image, Vec2(col, row), Vec2(size, size))
 
     draw_ground(config.map_size)
 
@@ -108,7 +102,7 @@ def draw_all():
     map_scaled_size = int(map_px_size * zoom_factor)
     scaled_world_surface = pygame.transform.scale(world_surface, (map_scaled_size, map_scaled_size))
 
-    SCREEN.blit(scaled_world_surface, (scroll_x, scroll_y))
+    SCREEN.blit(scaled_world_surface, tuple(scroll_factor))
     draw_ui_layer(SCREEN)
 
 

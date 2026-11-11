@@ -8,10 +8,10 @@ import re
 import logging
 import renderer
 from core.entity import entities
-from games import tick_processor
+import tick_processor
 from core.games.game1 import e as rocks
 from core.item import items
-
+from core.math_utils import Vec2
 focused : classmethod[CodeWindow]= None
 text = ""
 lines = [""]
@@ -60,7 +60,7 @@ class CodeWindow(ElementWrapper):
 
         Button(relative_rect=pygame.Rect((0, 0), (50, 25)), text="play", object_id="play", manager=manager, container=self.container, click_func=self.test)
         Button(relative_rect=pygame.Rect((100, 0), (50, 25)), text="scale", object_id="scale", manager=manager, container=self.container, click_func=self.test)
-        manager.moving_elements.append((self.container, (300 - renderer.scroll_x, 100 - renderer.scroll_y), (260, 70)))
+        manager.moving_elements.append((self.container, Vec2(300 - renderer.scroll_factor.x, 100 - renderer.scroll_factor.y), Vec2(260, 70)))
 
     def test(self, e) -> bool:
 

@@ -6,7 +6,7 @@ import input
 import renderer
 from ui import gui, element
 from core.item import items
-from games import tick_processor
+import core.tick_processor as tick_processor
 
 pygame.init()
 pygame.display.set_caption(config.TITLE)

@@ -1,7 +1,7 @@
 from random import random
 from core.entity.entities import Entity, Argon
 import random
-
+from core.math_utils import Vec2
 from entity import entities
 from item.items import items
 
@@ -15,7 +15,7 @@ def new_level(world_size):
     for i in range(world_size[0]):
         for j in range(world_size[1]):
             if random.randint(0, 1):
-                curpos = (i, j)
+                curpos = Vec2(i, j)
                 e[curpos] = Argon(pos = curpos)
                 count +=1
 
