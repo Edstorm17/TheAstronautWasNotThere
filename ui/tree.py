@@ -1,8 +1,8 @@
 import pygame
 import pygame_gui
 import ui.gui
-
-from ui.element import ElementWrapper
+import config
+from ui.element import ElementWrapper, Button
 
 
 class TreeWindow(ElementWrapper):
@@ -15,6 +15,13 @@ class TreeWindow(ElementWrapper):
             pygame.MOUSEBUTTONDOWN: self.on_click,
             pygame.MOUSEBUTTONUP: self.on_up
         }, manager)
+
+        Button(relative_rect=pygame.Rect(0, 0, 800, 600), text="Rock yield", object_id="#yield_upgd", manager=manager, click_func=self.on_upgrade, container=ele)
+
+    def on_upgrade(self, event):
+        upg_id = event.ui_element.object_ids[-1]
+        config.upgrades[upg_id] = (config.upgrades[upg_id] if upg_id in config.upgrades else 0) + 1
+        return True
 
     def on_click(self, event):
         self.clicked_on = True

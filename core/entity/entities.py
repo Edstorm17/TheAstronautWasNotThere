@@ -16,8 +16,8 @@ class Entity(GameObject):
             for_render.append(self)
 
     def move(self, displacement):
-        self.x = min(max(self.x + displacement[0], 0), config.map_size-1)
-        self.y = min(max(self.y + displacement[1], 0), config.map_size-1)
+        self.x = min(max(self.x + displacement[0], 0), config.map_size - 1)
+        self.y = min(max(self.y + displacement[1], 0), config.map_size - 1)
     def delete(self):
         if self in for_render:
             for_render.remove(self)
