@@ -36,9 +36,9 @@ def zoom(amount, zoom_center):
     scroll_y = zoom_center[1] - ((zoom_center[1]-scroll_y)/zoom_factor)*new_zoom_factor
     zoom_factor = new_zoom_factor
     gui.update_moving_elements((scroll_x, scroll_y), scale=zoom_factor)
-
+j = pygame.image.load('assets/ui_assets/background.png')
 def draw_background(screen):
-    screen.fill("darkorchid4")
+    screen.blit(j)
 
 def draw_game_layer(screen):
     def draw_text(text):
