@@ -21,7 +21,7 @@ box_y = 50
 timer = 0
 
 line_height = 85
-windows: list[CodeWindow] = []
+windows = []
 
 
 class ElementWrapper:
@@ -42,11 +42,11 @@ class CodeWindow(ElementWrapper):
         self.cursor_position = 0
         self.focused = False
         self.line_n = 0
-        self.jhg = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0, 20), (self.width, self.height + 100*self.line_n)), manager=manager.manager)
-        self.move = Button(relative_rect=pygame.Rect((50, 0), (50, 25)), text="move", object_id="move", manager=manager, container=self.jhg, click_func=None)
+        self.container = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0, 20), (self.width, self.height + 100*self.line_n)), manager=manager.manager)
+        self.move = Button(relative_rect=pygame.Rect((50, 0), (50, 25)), text="move", object_id="move", manager=manager, container=self.container, click_func=None)
         self.moving = False
 
-        super().__init__(self.jhg ,{
+        super().__init__(self.container ,{
             pygame.MOUSEBUTTONDOWN: self.on_click,
             pygame.MOUSEBUTTONUP: self.on_up,
             pygame.KEYDOWN: self.on_key_down,
@@ -54,9 +54,9 @@ class CodeWindow(ElementWrapper):
         }, manager)
         windows.append(self)
 
-        Button(relative_rect=pygame.Rect((0, 0), (50, 25)), text="play", object_id="play", manager=manager, container=self.jhg, click_func=self.test)
-        Button(relative_rect=pygame.Rect((100, 0), (50, 25)), text="scale", object_id="scale", manager=manager, container=self.jhg, click_func=None)
-        manager.moving_elements.append((self.jhg, (300 - renderer.scroll_x, 100 - renderer.scroll_y), (260, 70)))
+        Button(relative_rect=pygame.Rect((0, 0), (50, 25)), text="play", object_id="play", manager=manager, container=self.container, click_func=self.test)
+        Button(relative_rect=pygame.Rect((100, 0), (50, 25)), text="scale", object_id="scale", manager=manager, container=self.container, click_func=self.test)
+        manager.moving_elements.append((self.container, (300 - renderer.scroll_x, 100 - renderer.scroll_y), (260, 70)))
 
     def test(self, e) -> bool:
 
@@ -139,6 +139,12 @@ class CodeWindow(ElementWrapper):
         return False
 
     def on_key_down(self, event) -> bool:
+        """C'est le moyen de mettre le text entré par l'utilisateur dans la text box
+        \n il handle
+        - les backspace
+        - les touches enter
+        - toutes les lettres et nombres
+        """
         global max
         global focused
         if focused == self:
@@ -152,38 +158,38 @@ class CodeWindow(ElementWrapper):
                     focused.text = focused.text[:-1]
                     print("remove thing")
                 if focused.lenght[f"{focused.line_n}"] > 0:
-                    focused.lenght[f"{focused.line_n}"] -= 3
+                    focused.lenght[f"{focused.line_n}"] -= 4
 
+            # la clé enter est pris en compte pour faire une nouvelle ligne
             elif event.key == 13:
                 print("entred")
                 print(focused.text[-1:])
-                if focused.text[-1::] == ":":
-                    print("deux points!")
-                    focused.text += "\n"
-                    focused.text += "    "
-
-                else:
-                    print("normal")
-                    focused.text += "\n"
+                focused.text += "\n"
                 focused.line_n += 1
                 focused.lenght[f"{focused.line_n}"] = 0
             else:
-                focused.text += event.unicode
-                focused.lenght[f"{focused.line_n}"] += 3
-                print(focused.text)
+                if event.key not in [pygame.K_LEFT,pygame.K_RIGHT,pygame.K_UP,pygame.K_DOWN]:
 
-        max = 0
-        for i in range(len(focused.lenght)):
-            if focused.lenght[f"{max}"] < focused.lenght[f"{i}"]:
-                max = i
-        focused.jhg.set_dimensions((focused.width + focused.lenght[f"{max}"] ,focused.height + 24 * focused.line_n),clamp_to_container=True)
-        draw_text()
-        return True
+                    focused.text += event.unicode
+                    focused.lenght[f"{focused.line_n}"] += 4
+                    print(focused.text)
 
-def add_tags(tag, word):
-    return "<%s>%s</%s>" % (tag, word, tag)
+            max = 0
+            for i in range(len(focused.lenght)):
+                if focused.lenght[f"{max}"] < focused.lenght[f"{i}"]:
+                    max = i
+            focused.container.set_dimensions((focused.width + focused.lenght[f"{max}"] ,focused.height + 24 * focused.line_n),clamp_to_container=True)
+            draw_text()
+            return True
+
 
 def draw_text():
+    """C'est le renderer de texte qui va ajouter le code html au texte
+    \n
+    Il handle entre autre:
+    - colorie les fonctions
+    - colorie les noms de fonctions
+    """
     global timer
     from ui.gui import GameGUIManager
     max = 0
@@ -200,7 +206,7 @@ def draw_text():
             html_text= p,
             relative_rect= pygame.Rect((0, 25), ((300+focused.lenght[f"{max}"]), (360 + 24*focused.line_n))),
             manager= focused.manager.manager,
-            container= focused.jhg)
+            container= focused.container)
 
 class Button(ElementWrapper):
     def __init__(self, relative_rect, text, object_id, manager, click_func=lambda e: False, container=None):
