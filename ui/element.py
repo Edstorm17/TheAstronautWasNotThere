@@ -1,16 +1,14 @@
-from functools import partial
+from pydoc import html
+import re
 from pydoc import html
 from typing import Callable
-from pygame.event import Event
+
 import pygame
 import pygame_gui
-import re
-import logging
+from pygame.event import Event
+
 import renderer
-from core.entity import entities
-from games import tick_processor
-from core.games.game1 import e as rocks
-from core.item import items
+from games import code_processor
 
 focused = None
 text = ""
@@ -59,86 +57,19 @@ class CodeWindow(ElementWrapper):
 
     def test(self, e) -> bool:
 
-        log = logging.getLogger(__name__)
-
-        directions = {"up": (0, 1), "down": (0, -1), "left": (-1, 0), "right": (1, 0)}
-        max_steps = 100
-        errors = []
-
         text = getattr(self, "text", None)
         source = text.replace("\\n", "\n")
 
-        processor = tick_processor.new_processor()
-
+        processor = code_processor.new_processor()
         ls = source.splitlines()
 
-        def process_line(proc: tick_processor.TickProcessor, lineno, c_lines) -> bool:
-            raw = c_lines[lineno-1]
+        for raw in ls:
             line = raw.split(";")[0].split("#")[0].strip().lower()
             if not line:
                 return True
             tokens = line.replace(",", " ").split()
             op, args = tokens[0], tokens[1:]
-            #la c pour les instructions
-
-            match op:
-                case 'mv':
-                    if len(args) != 2:
-                        errors.append((lineno, "mv a besoin de deux arguments (direction, int)"))
-                        return False
-                    direction = args[0]
-                    if direction not in directions:
-                        errors.append((lineno, f"mauvaise dirs '{direction}'"))
-                        return False
-                    if not args[1].isdigit():
-                        errors.append((lineno, f"le deuxième argument doit être un nombre entier"))
-                        return False
-                    steps = int(args[1])
-                    if steps > max_steps:
-                        errors.append((lineno, f"too fat steps {steps}, max {max_steps}"))
-                        return False
-                    processor.append_processes([partial(lambda d: entities.SHIP.move(d), directions[direction]) for _ in range(steps)])
-                case 'harv':
-                    if len(args) != 0:
-                        errors.append((lineno, "harv a besoin d'aucun arguments"))
-                        return False
-                    def harvest():
-                        if entities.SHIP.get_pos() in rocks:
-                            rocks.pop(entities.SHIP.get_pos()).delete()
-                            items.argon.increment()
-
-                    processor.append_process(harvest)
-                case 'jump':
-                    if len(args) != 1:
-                        errors.append((lineno, "jump a besoin d'un seul argument"))
-                        return False
-                    if not args[0].isdigit():
-                        errors.append((lineno, "le premier argument doit être un nombre entier"))
-                        return False
-
-                    target = int(args[0])
-
-                    def jump(pr: tick_processor.TickProcessor, target_line, code_lines):
-                        pr.clear_processes()
-                        for lin in range(target_line, len(code_lines)+1):
-                            if not process_line(pr, lin, code_lines):
-                                break
-
-                    processor.append_process(partial(jump, proc, target, c_lines))
-                case _:
-                    errors.append((lineno, f"c quoi ca??? :  '{op}'"))
-                    return False
-
-            return True
-
-        for lineno in range(1, len(ls)+1):
-            if not process_line(processor, lineno, ls):
-                break
-
-        if errors:
-            for lineno, message in errors:
-                log.error("erreur", lineno, message)
-            return False
+            processor.append_line((op, args))
 
         return True
 
@@ -175,7 +106,6 @@ class CodeWindow(ElementWrapper):
         global max
         global focused
         if focused == self:
-            print(event.unicode)
             if event.key == pygame.K_BACKSPACE:
                 if focused.text[-1:] == "\n":
                     focused.text = focused.text[0:-1]
@@ -189,8 +119,6 @@ class CodeWindow(ElementWrapper):
 
             # la clé enter est pris en compte pour faire une nouvelle ligne
             elif event.key == 13:
-                print("entred")
-                print(focused.text[-1:])
                 focused.text += "\n"
                 focused.line_n += 1
                 focused.lenght[f"{focused.line_n}"] = 0
@@ -199,7 +127,6 @@ class CodeWindow(ElementWrapper):
 
                     focused.text += event.unicode
                     focused.lenght[f"{focused.line_n}"] += 4
-                    print(focused.text)
 
             max = 0
             for i in range(len(focused.lenght)):

@@ -6,7 +6,7 @@ import input
 import renderer
 from ui import gui, element
 from core.item import items
-from games import tick_processor
+from games import code_processor
 
 pygame.init()
 pygame.display.set_caption(config.TITLE)
@@ -27,7 +27,7 @@ print(e)
 while running:
     time_delta = clock.tick(60)/1000
 
-    tick_processor.process_next_if_available()
+    code_processor.process_next_if_available()
 
     for event in pygame.event.get():
         if not (gui._active_manager.handle_event(event) or ui_manager.process_events(event)):
