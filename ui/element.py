@@ -4,6 +4,7 @@ from pygame.event import Event
 import pygame
 import pygame_gui
 import re
+import logging
 import threading
 import renderer
 import time
@@ -56,7 +57,7 @@ class CodeWindow(ElementWrapper):
         manager.moving_elements.append((self.jhg, (300 - renderer.scroll_x, 100 - renderer.scroll_y), (260, 70)))
 
     def test(self, e):
-        import logging
+
         log = logging.getLogger(__name__)
 
         directions = {"up": (0, 1), "down": (0, -1), "left": (-1, 0), "right": (1, 0)}
