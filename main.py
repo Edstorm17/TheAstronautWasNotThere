@@ -22,7 +22,6 @@ timer = 0
 running = True
 
 new_level(10)
-print(e)
 
 while running:
     time_delta = clock.tick(60)/1000

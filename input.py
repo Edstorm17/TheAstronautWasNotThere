@@ -65,7 +65,6 @@ class Keyboard:
             entities.SHIP.move(Vec2(0, -1))
 
         if key == pygame.K_SPACE:
-            print(e)
             if entities.SHIP.get_pos() in e:
                 e.pop(entities.SHIP.get_pos()).delete()
                 items.gold.increment()

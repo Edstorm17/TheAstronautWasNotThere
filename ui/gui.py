@@ -54,8 +54,6 @@ class GameGUIManager(GUIManager):
         for e, p, s in self.moving_elements:
             e.set_position(tuple(p + scroll_factor))
             if scale:
-                print(type(s))
-                print(type(scale))
                 e.set_dimensions(tuple(s * scale))
                 for child in e.get_container().elements:
                     child.set_dimensions(tuple(s * scale), clamp_to_container=False)
