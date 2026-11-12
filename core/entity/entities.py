@@ -16,8 +16,8 @@ class Entity(GameObject):
             for_render.append(self)
 
     def move(self, displacement):
-        self.x = min(max(self.x + displacement[0], 0), config.map_size-1)
-        self.y = min(max(self.y + displacement[1], 0), config.map_size-1)
+        self.x = min(max(self.x + displacement[0], 0), config.map_size - 1)
+        self.y = min(max(self.y + displacement[1], 0), config.map_size - 1)
     def delete(self):
         if self in for_render:
             for_render.remove(self)
@@ -45,9 +45,9 @@ class Ship(Entity):
 
 #rocks have 3 states: fresh, crackled, destroyed
 #the player can get the rock position and type, the type deetermines the hardness of the rock
-class Rock(Entity):
+class Argon(Entity):
     def __init__(self, pos):
-        super().__init__("rock.png", pos)
+        super().__init__("argon_item.png", pos)
         self.name = "rock"
 
         self.state = states[random.randint(0,2)]
@@ -61,6 +61,26 @@ class Rock(Entity):
         return self.type
     def hardness(self):
         return self.hardness
+class Gold(Entity):
+        def __init__(self, pos):
+            super().__init__("gold_item.png", pos)
+            self.name = "gold"
+
+            self.state = states[random.randint(0, 2)]
+            self.type = types[random.randint(0, 2)]
+            self.hardness = random.randint(1, 10)
+
+        def pos(self):
+            return self.pos
+
+        def state(self):
+            return self.state
+
+        def type(self):
+            return self.type
+
+        def hardness(self):
+            return self.hardness
 
 
 class Wall(Entity):
