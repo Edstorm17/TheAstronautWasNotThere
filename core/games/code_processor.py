@@ -83,7 +83,7 @@ class CodeProcessor:
 
                 target = int(args[0])
 
-                self.index = target - 2
+                self.index = target - 1
             case _:
                 self.logger.log(self.index, f"c quoi ca??? :  '{op}'")
                 return False

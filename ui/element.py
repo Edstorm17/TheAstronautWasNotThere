@@ -1,16 +1,13 @@
-from functools import partial
+import re
 from pydoc import html
 from typing import Callable
-from pygame.event import Event
+
 import pygame
 import pygame_gui
-import re
-import logging
+from pygame.event import Event
+
 import renderer
-from core.entity import entities
-from games import tick_processor
-from core.games.game1 import e as rocks
-from core.item import items
+from games import code_processor
 
 focused : classmethod[CodeWindow]= None
 text = ""
@@ -64,60 +61,19 @@ class CodeWindow(ElementWrapper):
 
     def test(self, e) -> bool:
 
-        log = logging.getLogger(__name__)
-
-        directions = {"up": (0, 1), "down": (0, -1), "left": (-1, 0), "right": (1, 0)}
-        max_steps = 100
-        errors = []
-
         text = getattr(self, "text", None)
         source = text.replace("\\n", "\n")
 
-        processor = tick_processor.new_processor()
+        processor = code_processor.new_processor()
+        ls = source.splitlines()
 
-        for lineno, raw in enumerate(source.splitlines(), start=1):
+        for raw in ls:
             line = raw.split(";")[0].split("#")[0].strip().lower()
             if not line:
-                continue
+                return True
             tokens = line.replace(",", " ").split()
             op, args = tokens[0], tokens[1:]
-            #la c pour les instructions
-
-            match op:
-                case 'mv':
-                    if len(args) != 2:
-                        errors.append((lineno, "mv a besoin de deux arguments (direction, int)"))
-                        break
-                    direction = args[0]
-                    if direction not in directions:
-                        errors.append((lineno, f"mauvaise dirs '{direction}'"))
-                        break
-                    if not args[1].isdigit():
-                        errors.append((lineno, f"le deuxième argument doit être un nombre entier"))
-                        break
-                    steps = int(args[1])
-                    if steps > max_steps:
-                        errors.append((lineno, f"too fat steps {steps}, max {max_steps}"))
-                        break
-                    processor.append_processes([partial(lambda d: entities.SHIP.move(d), directions[direction]) for _ in range(steps)])
-                case 'harv':
-                    if len(args) != 0:
-                        errors.append((lineno, "harv a besoin d'aucun arguments"))
-                        return False
-                    def harvest():
-                        if entities.SHIP.get_pos() in rocks:
-                            rocks.pop(entities.SHIP.get_pos()).delete()
-                            items.gold.increment()
-
-                    processor.append_process(lambda: harvest())
-                case _:
-                    errors.append((lineno, f"c quoi ca??? :  '{op}'"))
-                    continue
-
-        if errors:
-            for lineno, message in errors:
-                log.error("erreur", lineno, message)
-            return False
+            processor.append_line((op, args))
 
         return True
 
