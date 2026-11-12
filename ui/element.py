@@ -8,11 +8,11 @@ import re
 import logging
 import renderer
 from core.entity import entities
-from games import code_processor
+from games import tick_processor
 from core.games.game1 import e as rocks
 from core.item import items
 
-focused = None
+focused : classmethod[CodeWindow]= None
 text = ""
 lines = [""]
 box_x = 50
@@ -21,6 +21,11 @@ timer = 0
 
 line_height = 85
 windows = []
+colors = {
+    "#FFA500": ["harv","mv","jump"],
+    "#00FF00": ["up","down","left","right"],
+    "#00FFFF": ["1","2","3","4","5","6","7","8","9"],
+}
 
 
 class ElementWrapper:
@@ -33,17 +38,17 @@ class ElementWrapper:
 class CodeWindow(ElementWrapper):
     """This code makes codes windows to allow player to code in game. This class work with a Manager set by the ElementWrapper"""
     def __init__(self, manager):
-        self.lenght = {"0":0,}
-        self.space = 0
-        self.width = 170
-        self.height = 70
-        self.text = ""
-        self.cursor_position = 0
-        self.focused = False
-        self.line_n = 0
+        self.length : dict= {"0":0, }
+        self.space : int = 0
+        self.width : int= 170
+        self.height : int = 70
+        self.text : str = ""
+        self.cursor_position : int = 0
+        self.focused : bool = False
+        self.line_n : int = 0
         self.container = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0, 20), (self.width, self.height + 100*self.line_n)), manager=manager.manager)
         self.move = Button(relative_rect=pygame.Rect((50, 0), (50, 25)), text="move", object_id="move", manager=manager, container=self.container, click_func=None)
-        self.moving = False
+        self.moving : bool = False
 
         super().__init__(self.container ,{
             pygame.MOUSEBUTTONDOWN: self.on_click,
@@ -59,19 +64,60 @@ class CodeWindow(ElementWrapper):
 
     def test(self, e) -> bool:
 
+        log = logging.getLogger(__name__)
+
+        directions = {"up": (0, 1), "down": (0, -1), "left": (-1, 0), "right": (1, 0)}
+        max_steps = 100
+        errors = []
+
         text = getattr(self, "text", None)
         source = text.replace("\\n", "\n")
 
-        processor = code_processor.new_processor()
-        ls = source.splitlines()
+        processor = tick_processor.new_processor()
 
-        for raw in ls:
+        for lineno, raw in enumerate(source.splitlines(), start=1):
             line = raw.split(";")[0].split("#")[0].strip().lower()
             if not line:
-                return True
+                continue
             tokens = line.replace(",", " ").split()
             op, args = tokens[0], tokens[1:]
-            processor.append_line((op, args))
+            #la c pour les instructions
+
+            match op:
+                case 'mv':
+                    if len(args) != 2:
+                        errors.append((lineno, "mv a besoin de deux arguments (direction, int)"))
+                        break
+                    direction = args[0]
+                    if direction not in directions:
+                        errors.append((lineno, f"mauvaise dirs '{direction}'"))
+                        break
+                    if not args[1].isdigit():
+                        errors.append((lineno, f"le deuxième argument doit être un nombre entier"))
+                        break
+                    steps = int(args[1])
+                    if steps > max_steps:
+                        errors.append((lineno, f"too fat steps {steps}, max {max_steps}"))
+                        break
+                    processor.append_processes([partial(lambda d: entities.SHIP.move(d), directions[direction]) for _ in range(steps)])
+                case 'harv':
+                    if len(args) != 0:
+                        errors.append((lineno, "harv a besoin d'aucun arguments"))
+                        return False
+                    def harvest():
+                        if entities.SHIP.get_pos() in rocks:
+                            rocks.pop(entities.SHIP.get_pos()).delete()
+                            items.gold.increment()
+
+                    processor.append_process(lambda: harvest())
+                case _:
+                    errors.append((lineno, f"c quoi ca??? :  '{op}'"))
+                    continue
+
+        if errors:
+            for lineno, message in errors:
+                log.error("erreur", lineno, message)
+            return False
 
         return True
 
@@ -113,32 +159,30 @@ class CodeWindow(ElementWrapper):
                 if focused.text[-1:] == "\n":
                     focused.text = focused.text[0:-1]
                     focused.line_n -= 1
-                    print("remove line ")
                 else:
                     focused.text = focused.text[:-1]
                     print("remove thing")
-                if focused.lenght[f"{focused.line_n}"] > 0:
-                    focused.lenght[f"{focused.line_n}"] -= 4
+                if focused.length[f"{focused.line_n}"] > 0:
+                    focused.length[f"{focused.line_n}"] -= 4
 
             # la clé enter est pris en compte pour faire une nouvelle ligne
             elif event.key == 13:
-                print("entred")
-                print(focused.text[-1:])
+                #print(focused.text[-1:])
                 focused.text += "\n"
                 focused.line_n += 1
-                focused.lenght[f"{focused.line_n}"] = 0
+                focused.length[f"{focused.line_n}"] = 0
             else:
                 if event.key not in [pygame.K_LEFT,pygame.K_RIGHT,pygame.K_UP,pygame.K_DOWN]:
 
                     focused.text += event.unicode
-                    focused.lenght[f"{focused.line_n}"] += 4
-                    print(focused.text)
+                    focused.length[f"{focused.line_n}"] += 4
+                    #print(focused.text)
 
             max = 0
-            for i in range(len(focused.lenght)):
-                if focused.lenght[f"{max}"] < focused.lenght[f"{i}"]:
+            for i in range(len(focused.length)):
+                if focused.length[f"{max}"] < focused.length[f"{i}"]:
                     max = i
-            focused.container.set_dimensions((focused.width + focused.lenght[f"{max}"] ,focused.height + 24 * focused.line_n),clamp_to_container=True)
+            focused.container.set_dimensions((focused.width + focused.length[f"{max}"] ,focused.height + 24 * focused.line_n),clamp_to_container=True)
             draw_text()
             return True
 
@@ -153,20 +197,40 @@ def draw_text():
     global timer
     from ui.gui import GameGUIManager
     max = 0
-    for i in range(len(focused.lenght)):
-        if focused.lenght[f"{max}"] < focused.lenght[f"{i}"]:
+    for i in range(len(focused.length)):
+        if focused.length[f"{max}"] < focused.length[f"{i}"]:
             max = i
     if focused is not None and isinstance(focused.manager, GameGUIManager):
         p = html.escape(focused.text)
-        p = re.sub(r'def\b', '<font color="#FFA500">def</font>', p)
+        p += "<-"
+        for mot in colors:
+            for i in colors[mot]:
+                p = re.sub(fr'{i}\b', f'<font color="{mot}">{i}</font>', p)
         p = re.sub(r'(\w+)(?=\()', r'<font color="#004cff">\1</font>',p)
+
+
+
         p = p.replace("\n", "<br>")
+
+        t = ""
+        for i in range(len(focused.length)+1):
+            t += f"{i}.<br>"
+        text_box_2 = pygame_gui.elements.UITextBox(
+            html_text=t,
+            relative_rect=pygame.Rect((0, 25), (300, (24 * (len(focused.length)+1)))),
+            manager=focused.manager.manager,
+            container=focused.container)
 
         text_box = pygame_gui.elements.UITextBox(
             html_text= p,
-            relative_rect= pygame.Rect((0, 25), ((300+focused.lenght[f"{max}"]), (360 + 24*focused.line_n))),
+            relative_rect= pygame.Rect((30, 25), ((300+focused.length[f"{max}"]), (360 + 24*focused.line_n))),
             manager= focused.manager.manager,
-            container= focused.container)
+            container= focused.container,
+            )
+
+
+
+
 
 class Button(ElementWrapper):
     def __init__(self, relative_rect, text, object_id, manager, click_func=lambda e: False, container=None):
