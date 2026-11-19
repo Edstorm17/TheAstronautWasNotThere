@@ -5,7 +5,7 @@ from core.entity.entities import Entity
 from core.entity import entities
 import pygame
 from core.item import items
-from core.games.game1 import e
+from core.games.game1 import map
 from core.math_utils import Vec2
 import ui.gui
 
@@ -65,12 +65,12 @@ class Keyboard:
             entities.SHIP.move(Vec2(0, -1))
 
         if key == pygame.K_SPACE:
-            if entities.SHIP.get_pos() in e:
+            if entities.SHIP.get_pos() in map:
                 e.pop(entities.SHIP.get_pos()).delete()
                 items.gold.increment()
             else:
                 print("no rock")
-            if len(e) == 0:
+            if len(map) == 0:
                 print("you win")
                 g = pygame.image.load('assets/world_assets/press.png')
                 renderer.win(g)

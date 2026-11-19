@@ -2,7 +2,7 @@ import logging
 import time
 
 from core.entity import entities
-from core.games.game1 import e as rocks
+from core.games.game1 import map as rocks
 from core.item import items
 import re
 

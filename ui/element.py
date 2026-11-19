@@ -7,7 +7,7 @@ import pygame_gui
 import re
 import logging
 import renderer
-from games import code_processor
+from core import code_processor
 from core.math_utils import Vec2
 focused : classmethod[CodeWindow]= None
 text = ""
