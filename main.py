@@ -1,12 +1,12 @@
 import pygame
 import pygame_gui
-from core.games.game1 import new_level, e
+from core.games.game1 import new_level
 import config
 import input
 import renderer
-from ui import gui, element
+from ui import gui
 from core.item import items
-from games import code_processor
+import code_processor
 
 pygame.init()
 pygame.display.set_caption(config.TITLE)

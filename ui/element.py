@@ -7,7 +7,7 @@ import pygame_gui
 from pygame.event import Event
 
 import renderer
-from games import code_processor
+import code_processor
 
 focused : classmethod[CodeWindow]= None
 text = ""
@@ -18,12 +18,12 @@ timer = 0
 
 line_height = 85
 windows = []
+
 colors = {
     "#FFA500": ["harv","mv","jump"],
     "#00FF00": ["up","down","left","right"],
     "#00FFFF": ["1","2","3","4","5","6","7","8","9"],
 }
-
 
 class ElementWrapper:
     def __init__(self, element_internal, event_funcs: dict[int, Callable[[Event], bool]], manager):
@@ -110,14 +110,12 @@ class CodeWindow(ElementWrapper):
         global max
         global focused
         if focused == self:
-            print(event.unicode)
             if event.key == pygame.K_BACKSPACE:
                 if focused.text[-1:] == "\n":
                     focused.text = focused.text[0:-1]
                     focused.line_n -= 1
                 else:
                     focused.text = focused.text[:-1]
-                    print("remove thing")
                 if focused.length[f"{focused.line_n}"] > 0:
                     focused.length[f"{focused.line_n}"] -= 4
 
