@@ -4,7 +4,7 @@ import config
 from ui import gui
 from core.entity import entities
 from config import TILE_SIZE
-from core.item import items
+from core.item.items import get_for_render
 import time
 from core.math_utils import Vec2
 
@@ -70,7 +70,7 @@ def draw_game_layer(screen):
 
 timeout_images = []
 
-def draw_ui_layer(screen):
+def draw_ui_layer(screen, items):
     def draw_item(index, item):
         x = screen.get_width() - (index+1)*config.ITEM_SIZE
         screen.blit(item.image, (x, 0))
@@ -79,7 +79,7 @@ def draw_ui_layer(screen):
         text_rect.center = (x+config.ITEM_SIZE//2, config.ITEM_SIZE)
         screen.blit(text_surf, text_rect)
 
-    for i, tem in enumerate(items.get_for_render()):
+    for i, tem in enumerate(get_for_render(items)):
         draw_item(i, tem)
 
     for img, timeout_time in timeout_images:
@@ -94,7 +94,7 @@ def show(img, timeout):
 def win(g):
     SCREEN.blit(g)
 
-def draw_all():
+def draw_all(items):
     draw_background(SCREEN)
 
     draw_game_layer(world_surface)
@@ -103,6 +103,6 @@ def draw_all():
     scaled_world_surface = pygame.transform.scale(world_surface, (map_scaled_size, map_scaled_size))
 
     SCREEN.blit(scaled_world_surface, tuple(scroll_factor))
-    draw_ui_layer(SCREEN)
+    draw_ui_layer(SCREEN, items)
 
 

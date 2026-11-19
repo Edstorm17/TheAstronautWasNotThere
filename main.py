@@ -1,12 +1,12 @@
 import pygame
 import pygame_gui
-from core.games.game1 import new_level
+from core.games.game1 import new_level, map
 import config
 import input
 import renderer
-from ui import gui
-from core.item import items
-import code_processor
+from ui import gui, element
+from core.item.items import init_items
+from games import code_processor
 
 pygame.init()
 pygame.display.set_caption(config.TITLE)
@@ -15,7 +15,7 @@ screen = pygame.display.set_mode(config.WINDOW_SIZE)
 clock = pygame.time.Clock()
 ui_manager = pygame_gui.UIManager(config.WINDOW_SIZE, theme_path="assets/ui_assets/theme.json")
 
-items.init_items()
+items = init_items()
 renderer.init(screen)
 gui.init(ui_manager)
 timer = 0
@@ -41,12 +41,12 @@ while running:
                 case pygame.MOUSEMOTION:
                     input.mouse.motion(event.pos, event.rel, event.buttons, event.touch)
                 case pygame.KEYDOWN:
-                    input.keyboard.key_down(event.key, event.mod, event.unicode, event.scancode)
+                    input.keyboard.key_down(event.key, event.mod, event.unicode, event.scancode, items)
                 case pygame.KEYUP:
                     input.keyboard.key_up(event.key, event.mod, event.unicode, event.scancode)
 
     ui_manager.update(time_delta)
-    renderer.draw_all()
+    renderer.draw_all(items)
     ui_manager.draw_ui(screen)
 
     pygame.display.flip()
