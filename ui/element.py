@@ -10,6 +10,7 @@ import renderer
 from core import code_processor
 from core.math_utils import Vec2
 focused : classmethod[CodeWindow]= None
+from ui.colors import Colors
 text = ""
 lines = [""]
 box_x = 50
@@ -19,11 +20,7 @@ timer = 0
 line_height = 85
 windows = []
 
-colors = {
-    "#FFA500": ["harv","mv","jump"],
-    "#00FF00": ["up","down","left","right"],
-    "#00FFFF": ["1","2","3","4","5","6","7","8","9"],
-}
+
 
 
 class ElementWrapper:
@@ -158,11 +155,14 @@ def draw_text():
     if focused is not None and isinstance(focused.manager, GameGUIManager):
         p = html.escape(focused.text)
         p += "<-"
-        for mot in colors:
-            for i in colors[mot]:
-                p = re.sub(fr'{i}\b', f'<font color="{mot}">{i}</font>', p)
+        for mot in Colors().fetch():
+            if mot != "#00FFFF":
+                for i in Colors().fetch()[mot]:
+                    p = re.sub(fr'({i}\b)', rf'<font color="{mot}">\1</font>', p)
+            else:
+                p = re.sub(fr"(-?\d+)", r'<font color="#00FFFF">\1</font>', p)
+                pass
         p = re.sub(r'(\w+)(?=\()', r'<font color="#004cff">\1</font>',p)
-
 
 
         p = p.replace("\n", "<br>")
@@ -188,6 +188,7 @@ def draw_text():
 
 
 class Button(ElementWrapper):
+    """This is the wrapper for any buttons on any surface or container. """
     def __init__(self, relative_rect, text, object_id, manager, click_func=lambda e: False, container=None):
         button = pygame_gui.elements.UIButton(relative_rect=relative_rect, text=text, object_id=object_id, manager=manager.manager, container=container)
         button.show()

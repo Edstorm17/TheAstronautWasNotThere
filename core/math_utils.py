@@ -7,12 +7,14 @@ class Vec2:
         self.x = x
         self.y = y
     def __add__(self, other: Vec2 | float) -> Vec2:
+        """ addition de deux vecteurs """
         if isinstance(other, Vec2):
             return Vec2(self.x + other.x, self.y + other.y)
         elif isinstance(other, tuple):
             return Vec2(self.x + other[0], self.y + other[1])
         return Vec2(self.x + other, self.y + other)
     def __iadd__(self, other):
+        """"""
         return self + other
     def __radd__(self, other: Vec2 | float) -> Vec2:
         if isinstance(other, Vec2):
@@ -21,6 +23,7 @@ class Vec2:
             return Vec2(self.x + other[0], self.y + other[1])
         return Vec2(self.x + other, self.y + other)
     def __sub__(self, other: Vec2 | float) -> Vec2:
+        """Soustraction de vecteurs"""
         if isinstance(other, Vec2):
             return Vec2(self.x - other.x, self.y - other.y)
         elif isinstance(other, tuple):

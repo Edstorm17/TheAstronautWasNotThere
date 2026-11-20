@@ -1,10 +1,13 @@
 import logging
 import time
+from typing import Callable, Any
 
 from core.entity import entities
 from core.games.game1 import map as rocks
 from core.item import items
 import re
+global colors
+from ui.colors import Colors
 
 register_match = re.compile(r"%\w+")
 
@@ -35,11 +38,12 @@ class Argument:
 registered_methods: dict[str, Method] = {}
 
 class Method:
-    def __init__(self, name, function, *arg_types: Argument):
-        self.name = name
-        self.func = function
+    def __init__(self, name: str, function: Callable, *arg_types: Argument):
+        self.name: str = name
+        self.func: Callable = function
         self.arg_types = arg_types
         registered_methods[name] = self
+        Colors("add",self.name,"#FFA500")
 
     def call(self, context: CodeProcessor, args: list[str]):
         if len(args) != len(self.arg_types):
