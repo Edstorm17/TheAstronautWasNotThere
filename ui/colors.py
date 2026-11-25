@@ -58,7 +58,7 @@ class Colors:
 
 
 colors = {
+    "#00FFFF": [r'(-?\d+)'],
     "#FFA500": [],
-    "#00FF00": ["up","down","left","right"],
-    "#00FFFF": [r'-?\d+'],
+    "#00FF00": [r'\W*(up)\W*',r"\W*(down)\W*",r"\W*(left)\W*",r"\W*(right)\W*"],
 }

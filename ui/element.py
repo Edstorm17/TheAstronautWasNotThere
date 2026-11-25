@@ -124,8 +124,10 @@ class CodeWindow(ElementWrapper):
                 focused.line_n += 1
                 focused.length[f"{focused.line_n}"] = 0
             else:
-                if event.key not in [pygame.K_LEFT,pygame.K_RIGHT,pygame.K_UP,pygame.K_DOWN]:
+                if event.key in [pygame.K_LEFT,pygame.K_RIGHT,pygame.K_UP,pygame.K_DOWN]:
 
+                    pass
+                else:
                     focused.text += event.unicode
                     focused.length[f"{focused.line_n}"] += 4
                     #print(focused.text)
@@ -154,20 +156,18 @@ def draw_text():
             max = i
     if focused is not None and isinstance(focused.manager, GameGUIManager):
         p = html.escape(focused.text)
-        p += "<-"
+
         col = Colors().fetch()
         for mot in col.keys():
-            if mot != "#00FFFF":
+            # if mot != "#00FFFF":
                 for i in col[mot]:
-                    p = re.sub(fr'(\b{i}\b)', rf'<font color="{mot}">\1</font>', p)
-            else:
-                p = re.sub(fr"(-?\d+)", r'<font color="#00FFFF">\1</font>', p)
+                    p = re.sub(fr"{i}", fr'<font color="{mot}">\1</font>', p)
                 pass
-        p = re.sub(r'(\w+)(?=\()', r'<font color="#004cff">\1</font>',p)
+        # p = re.sub(r'(\w+)(?=\()', r'<font color="#004cff">\1</font>',p)
 
 
         p = p.replace("\n", "<br>")
-
+        p += "{"
         t = ""
         for i in range(len(focused.length)+1):
             t += f"{i}.<br>"

@@ -43,7 +43,7 @@ class Method:
         self.func: Callable = function
         self.arg_types = arg_types
         registered_methods[name] = self
-        Colors("add",self.name,"#FFA500")
+        Colors("add",fr"\W*({self.name})\W*","#FFA500")
 
     def call(self, context: CodeProcessor, args: list[str]):
         if len(args) != len(self.arg_types):
