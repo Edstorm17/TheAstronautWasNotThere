@@ -38,7 +38,7 @@ class CodeWindow(ElementWrapper):
         self.width : int= 170
         self.height : int = 70
         self.text : str = ""
-        self.pos : int = -1
+        self.pos : int = 0
         self.focused : bool = False
         self.line_n : int = 0
         self.container = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0, 20), (self.width, self.height + 100*self.line_n)), manager=manager.manager)
@@ -110,17 +110,19 @@ class CodeWindow(ElementWrapper):
         global focused
         if focused == self:
             if event.key == pygame.K_BACKSPACE:
-                if self.text[self.pos-1:self.pos] == "\n":
+                if self.text[self.pos-2:self.pos] == "\n":
                     self.text = self.text[0:self.pos-1:1] + self.text[self.pos:0:1]
                     if self.line_n > 0:
                         self.line_n -= 1
+                    self.pos -= 1
                 else:
-                    self.text = self.text[0:self.pos:1] + self.text[self.pos+1:0:1]
+                    self.text = self.text[0:self.pos-1:1] + self.text[self.pos-1:0:1]
                     if self.length[f"{self.line_n}"] > 0:
                         self.length[f"{self.line_n}"] -= 4
                     else:
                         if self.line_n > 0:
                             self.line_n -= 1
+                    self.pos -=1
 
 
             # la clé enter est pris en compte pour faire une nouvelle ligne
@@ -144,11 +146,9 @@ class CodeWindow(ElementWrapper):
 
                     pass
                 else:
-                    if self.pos == -1:
-                        self.text += event.unicode
-                    else:
-                        self.text = self.text[0:self.pos:] + event.unicode + self.text[self.pos:0:]
-                    focused.length[f"{focused.line_n}"] += 4
+                    self.text = self.text[0:self.pos:] + event.unicode + self.text[self.pos:0:]
+                    self.pos += 1
+                    self.length[f"{self.line_n}"] += 4
                     #print(focused.text)
 
             max = 0
@@ -189,7 +189,7 @@ def draw_text():
         if focused.pos == -1:
             p += "<-"
         else:
-            p = p[0:focused.pos:1] + "<-" + p[focused.pos:0:1]
+            p = p[0:focused.pos:1] + "<-" + p[focused.pos+1::1]
         t = ""
         for i in range(len(focused.length)+1):
             t += f"{i}.<br>"
