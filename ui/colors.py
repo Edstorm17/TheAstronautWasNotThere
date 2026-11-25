@@ -29,7 +29,10 @@ class Colors:
 
     def c_add(self):
         """add a new value to the color dict """
-        colors[self.key].append(self.value)
+        if isinstance(self.value, list):
+            colors[self.key].extend(self.value)
+        else:
+            colors[self.key].append(self.value)
         return colors
 
     def c_remove(self):
@@ -51,6 +54,7 @@ class Colors:
     def fetch(self):
         """pull the current color dict"""
         return colors
+
 
 
 colors = {

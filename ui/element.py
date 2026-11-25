@@ -155,10 +155,11 @@ def draw_text():
     if focused is not None and isinstance(focused.manager, GameGUIManager):
         p = html.escape(focused.text)
         p += "<-"
-        for mot in Colors().fetch():
+        col = Colors().fetch()
+        for mot in col.keys():
             if mot != "#00FFFF":
-                for i in Colors().fetch()[mot]:
-                    p = re.sub(fr'({i}\b)', rf'<font color="{mot}">\1</font>', p)
+                for i in col[mot]:
+                    p = re.sub(fr'(\b{i}\b)', rf'<font color="{mot}">\1</font>', p)
             else:
                 p = re.sub(fr"(-?\d+)", r'<font color="#00FFFF">\1</font>', p)
                 pass
