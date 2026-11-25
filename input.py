@@ -5,10 +5,10 @@ from core.entity.entities import Entity
 from core.entity import entities
 import pygame
 from core.item import items
-from core.games.game1 import map
+from core.games.game1 import map, harvest
 from core.math_utils import Vec2
 import ui.gui
-
+from core.games.map import Map
 arrow_down_counter_y = 0
 arrow_down_counter_x = 0
 
@@ -43,7 +43,7 @@ class Keyboard:
     def __init__(self):
         self.keys_down = {}
 
-    def key_down(self, key, mod, unicode, scancode):
+    def key_down(self, key, mod, unicode, scancode, items):
         self.keys_down[key] = True
 
         global arrow_down_counter_y
@@ -65,15 +65,7 @@ class Keyboard:
             entities.SHIP.move(Vec2(0, -1))
 
         if key == pygame.K_SPACE:
-            if entities.SHIP.get_pos() in map:
-                e.pop(entities.SHIP.get_pos()).delete()
-                items.gold.increment()
-            else:
-                print("no rock")
-            if len(map) == 0:
-                print("you win")
-                g = pygame.image.load('assets/world_assets/press.png')
-                renderer.win(g)
+            harvest(items)
     def key_up(self, key, mod, unicode, scancode):
         self.keys_down[key] = False
 

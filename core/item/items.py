@@ -20,7 +20,7 @@ class Item:
     def increment(self):
         self.amount += 1
 
-def get_for_render() -> list:
+def get_for_render(items) -> list:
     return list(items.values())
 
 def init_items():
@@ -28,3 +28,4 @@ def init_items():
     global gold, argon
     gold = Item("gold", "gold.png")
     argon = Item("argon", "argon.png")
+    return items

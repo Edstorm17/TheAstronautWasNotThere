@@ -1,18 +1,20 @@
 from __future__ import annotations
 class Vec2:
-    def __init__(self, x: float = 0.0, y: float = 0.0):
+    def __init__(self, x: int = 0, y: int = 0):
         if isinstance(x, tuple):
             self.x = x[0]
             self.y = x[1]
         self.x = x
         self.y = y
     def __add__(self, other: Vec2 | float) -> Vec2:
+        """ addition de deux vecteurs """
         if isinstance(other, Vec2):
             return Vec2(self.x + other.x, self.y + other.y)
         elif isinstance(other, tuple):
             return Vec2(self.x + other[0], self.y + other[1])
         return Vec2(self.x + other, self.y + other)
     def __iadd__(self, other):
+        """"""
         return self + other
     def __radd__(self, other: Vec2 | float) -> Vec2:
         if isinstance(other, Vec2):
@@ -21,6 +23,7 @@ class Vec2:
             return Vec2(self.x + other[0], self.y + other[1])
         return Vec2(self.x + other, self.y + other)
     def __sub__(self, other: Vec2 | float) -> Vec2:
+        """Soustraction de vecteurs"""
         if isinstance(other, Vec2):
             return Vec2(self.x - other.x, self.y - other.y)
         elif isinstance(other, tuple):
@@ -54,6 +57,7 @@ class Vec2:
         yield self.x
         yield self.y
     def __eq__(self, other : Vec2):
+        print(type(other))
         return self.x == other.x and self.y == other.y
     def __mod__(self, other):
         return Vec2(self.x % other, self.y % other)
@@ -64,3 +68,7 @@ class Vec2:
         return Vec2(min(self.x, other), min(self.y, other))
     def max(self, other : float) -> Vec2:
         return Vec2(max(self.x, other), max(self.y, other))
+    def to_int(self):
+        self.x = int(self.x)
+        self.y = int(self.y)
+        return self

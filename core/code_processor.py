@@ -1,10 +1,13 @@
 import logging
 import time
+from typing import Callable, Any
 
 from core.entity import entities
 from core.games.game1 import map as rocks
 from core.item import items
 import re
+global colors
+from ui.colors import Colors
 
 register_match = re.compile(r"%\w+")
 return_value_register = "%ret"
@@ -36,12 +39,13 @@ class Argument:
 registered_methods: dict[str, Method] = {}
 
 class Method:
-    def __init__(self, name, function, *arg_types: Argument, delay=0.0):
-        self.name = name
-        self.func = function
+    def __init__(self, name: str, function: Callable, *arg_types: Argument, delay=0.0):
+        self.name: str = name
+        self.func: Callable = function
         self.arg_types = arg_types
         self.delay = delay
         registered_methods[name] = self
+        Colors("add",fr"\W*({self.name})\W*","#FFA500")
 
     def call(self, ctx: CodeProcessor, args: list[str]):
         if len(args) != len(self.arg_types):
@@ -199,7 +203,7 @@ class CodeProcessor:
 
     def set_delay(self, seconds):
         self.next_call = time.time() + seconds
-            
+
     def process_next_line(self):
         if len(self._code_lines) > self.index and self.next_call <= time.time():
             self.process(self._code_lines[self.index][0], self._code_lines[self.index][1])

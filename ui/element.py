@@ -10,6 +10,7 @@ import renderer
 from core import code_processor
 from core.math_utils import Vec2
 focused : classmethod[CodeWindow]= None
+from ui.colors import Colors
 text = ""
 lines = [""]
 box_x = 50
@@ -19,11 +20,7 @@ timer = 0
 line_height = 85
 windows = []
 
-colors = {
-    "#FFA500": ["harv","mv","jump"],
-    "#00FF00": ["up","down","left","right"],
-    "#00FFFF": ["1","2","3","4","5","6","7","8","9"],
-}
+
 
 
 class ElementWrapper:
@@ -127,8 +124,10 @@ class CodeWindow(ElementWrapper):
                 focused.line_n += 1
                 focused.length[f"{focused.line_n}"] = 0
             else:
-                if event.key not in [pygame.K_LEFT,pygame.K_RIGHT,pygame.K_UP,pygame.K_DOWN]:
+                if event.key in [pygame.K_LEFT,pygame.K_RIGHT,pygame.K_UP,pygame.K_DOWN]:
 
+                    pass
+                else:
                     focused.text += event.unicode
                     focused.length[f"{focused.line_n}"] += 4
                     #print(focused.text)
@@ -157,16 +156,18 @@ def draw_text():
             max = i
     if focused is not None and isinstance(focused.manager, GameGUIManager):
         p = html.escape(focused.text)
-        p += "<-"
-        for mot in colors:
-            for i in colors[mot]:
-                p = re.sub(fr'{i}\b', f'<font color="{mot}">{i}</font>', p)
-        p = re.sub(r'(\w+)(?=\()', r'<font color="#004cff">\1</font>',p)
 
+        col = Colors().fetch()
+        for mot in col.keys():
+            # if mot != "#00FFFF":
+                for i in col[mot]:
+                    p = re.sub(fr"{i}", fr'<font color="{mot}">\1</font>', p)
+                pass
+        # p = re.sub(r'(\w+)(?=\()', r'<font color="#004cff">\1</font>',p)
 
 
         p = p.replace("\n", "<br>")
-
+        p += "{"
         t = ""
         for i in range(len(focused.length)+1):
             t += f"{i}.<br>"
@@ -188,6 +189,7 @@ def draw_text():
 
 
 class Button(ElementWrapper):
+    """This is the wrapper for any buttons on any surface or container. """
     def __init__(self, relative_rect, text, object_id, manager, click_func=lambda e: False, container=None):
         button = pygame_gui.elements.UIButton(relative_rect=relative_rect, text=text, object_id=object_id, manager=manager.manager, container=container)
         button.show()
