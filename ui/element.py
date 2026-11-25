@@ -38,7 +38,7 @@ class CodeWindow(ElementWrapper):
         self.width : int= 170
         self.height : int = 70
         self.text : str = ""
-        self.cursor_position : int = 0
+        self.pos : int = -1
         self.focused : bool = False
         self.line_n : int = 0
         self.container = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0, 20), (self.width, self.height + 100*self.line_n)), manager=manager.manager)
@@ -75,6 +75,7 @@ class CodeWindow(ElementWrapper):
 
         return True
 
+
     def on_motion(self, event) -> bool:
         if self.moving:
             x = self.element_internal.rect.x
@@ -109,26 +110,44 @@ class CodeWindow(ElementWrapper):
         global focused
         if focused == self:
             if event.key == pygame.K_BACKSPACE:
-                if focused.text[-1:] == "\n":
-                    focused.text = focused.text[0:-1]
-                    focused.line_n -= 1
+                if self.text[self.pos-1:self.pos] == "\n":
+                    self.text = self.text[0:self.pos-1:1] + self.text[self.pos:0:1]
+                    if self.line_n > 0:
+                        self.line_n -= 1
                 else:
-                    focused.text = focused.text[:-1]
-                if focused.length[f"{focused.line_n}"] > 0:
-                    focused.length[f"{focused.line_n}"] -= 4
+                    self.text = self.text[0:self.pos:1] + self.text[self.pos+1:0:1]
+                    if self.length[f"{self.line_n}"] > 0:
+                        self.length[f"{self.line_n}"] -= 4
+                    else:
+                        if self.line_n > 0:
+                            self.line_n -= 1
+
 
             # la clé enter est pris en compte pour faire une nouvelle ligne
             elif event.key == 13:
-                #print(focused.text[-1:])
-                focused.text += "\n"
-                focused.line_n += 1
-                focused.length[f"{focused.line_n}"] = 0
+                if self.pos == -1:
+                    self.text += "\n"
+                    self.line_n += 1
+                    self.length[f"{self.line_n}"] = 0
+                else:
+                    self.text = self.text[0:self.pos:1] + "\n" + self.text[self.pos:0:1]
+                    self.line_n += 1
+                    self.length[f"{self.line_n}"] = len(self.text[self.pos:0:])
             else:
                 if event.key in [pygame.K_LEFT,pygame.K_RIGHT,pygame.K_UP,pygame.K_DOWN]:
+                    match event.key:
+                        case pygame.K_LEFT:
+                            self.pos -= 1
+
+
+
 
                     pass
                 else:
-                    focused.text += event.unicode
+                    if self.pos == -1:
+                        self.text += event.unicode
+                    else:
+                        self.text = self.text[0:self.pos:] + event.unicode + self.text[self.pos:0:]
                     focused.length[f"{focused.line_n}"] += 4
                     #print(focused.text)
 
@@ -167,7 +186,10 @@ def draw_text():
 
 
         p = p.replace("\n", "<br>")
-        p += "{"
+        if focused.pos == -1:
+            p += "<-"
+        else:
+            p = p[0:focused.pos:1] + "<-" + p[focused.pos:0:1]
         t = ""
         for i in range(len(focused.length)+1):
             t += f"{i}.<br>"
