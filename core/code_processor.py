@@ -7,6 +7,7 @@ from core.item import items
 import re
 
 register_match = re.compile(r"%\w+")
+return_value_register = "%ret"
 
 process_delay = 0.5
 
@@ -35,21 +36,25 @@ class Argument:
 registered_methods: dict[str, Method] = {}
 
 class Method:
-    def __init__(self, name, function, *arg_types: Argument):
+    def __init__(self, name, function, *arg_types: Argument, delay=0.0):
         self.name = name
         self.func = function
         self.arg_types = arg_types
+        self.delay = delay
         registered_methods[name] = self
 
-    def call(self, context: CodeProcessor, args: list[str]):
+    def call(self, ctx: CodeProcessor, args: list[str]):
         if len(args) != len(self.arg_types):
             raise CodeException(f"Invalid argument length for {self.name} : Expected {len(self.arg_types)} arguments, but got instead {len(args)}.")
-        args = [ty.value(context, arg) for arg, ty in zip(args, self.arg_types)]
-        return self.func(context, *args)
+        args = [ty.value(ctx, arg) for arg, ty in zip(args, self.arg_types)]
+        ret = self.func(ctx, *args)
+        ctx.set_delay(self.delay)
+        return ret
 
 INT_VAR_ARG = Argument(register_match, int)
 STR_VAR_ARG = Argument(register_match, str)
 VAR_ARG = Argument(register_match, int, str)
+STR_ARG = Argument(str)
 
 def move_func(ctx, direction: str, steps: int):
     directions = {"up": (0, 1), "down": (0, -1), "left": (-1, 0), "right": (1, 0)}
@@ -82,16 +87,100 @@ def put_func(ctx, value: str | int, register: str):
     ctx.registers[register] = value
     print(ctx.registers)
 
-Method("mv", move_func, Argument("up", "right", "down", "left"), INT_VAR_ARG)
-Method("harv", harv_func)
+def get_pos_x(ctx):
+    return entities.SHIP.get_pos().x
+
+def get_pos_y(ctx):
+    return entities.SHIP.get_pos().y
+
+def equals(ctx, value1: int | str, value2: int | str):
+    return value1 == value2
+
+def smaller(ctx, value1: int, value2: int):
+    return value1 < value2
+
+def smaller_equals(ctx, value1: int, value2: int):
+    return value1 <= value2
+
+def greater(ctx, value1: int, value2: int):
+    return value1 > value2
+
+def greater_equals(ctx, value1: int, value2: int):
+    return value1 >= value2
+
+def add(ctx, value: int, register: str):
+    if not register_match.fullmatch(register):
+        raise CodeException(f"Invalid register {register}.")
+
+    if register not in ctx.registers:
+        raise CodeException(f"Register {register} is not initialised.")
+    if not isinstance(ctx.registers[register], int):
+        raise CodeException(f"Invalid register value {register}.")
+    ctx.registers[register] += value
+
+def sub(ctx, value: int, register: str):
+    if not register_match.fullmatch(register):
+        raise CodeException(f"Invalid register {register}.")
+
+    if register not in ctx.registers:
+        raise CodeException(f"Register {register} is not initialised.")
+    if not isinstance(ctx.registers[register], int):
+        raise CodeException(f"Invalid register value {register}.")
+    ctx.registers[register] -= value
+
+def div(ctx, value: int, register: str):
+    if not register_match.fullmatch(register):
+        raise CodeException(f"Invalid register {register}.")
+
+    if register not in ctx.registers:
+        raise CodeException(f"Register {register} is not initialised.")
+    if not isinstance(ctx.registers[register], int):
+        raise CodeException(f"Invalid register value {register}.")
+    ctx.registers[register] /= value
+
+def mul(ctx, value: int, register: str):
+    if not register_match.fullmatch(register):
+        raise CodeException(f"Invalid register {register}.")
+
+    if register not in ctx.registers:
+        raise CodeException(f"Register {register} is not initialised.")
+    if not isinstance(ctx.registers[register], int):
+        raise CodeException(f"Invalid register value {register}.")
+    ctx.registers[register] *= value
+
+def andd(ctx, value1: int, value2: int):
+    return int(value1 and value2)
+
+def nott(ctx, value: int):
+    return int(not value)
+
+def orr(ctx, value1: int, value2: int):
+    return int(value1 or value2)
+
+Method("mv", move_func, Argument("up", "right", "down", "left"), INT_VAR_ARG, delay=0.2)
+Method("harv", harv_func, delay=0.2)
 Method("jump", jump_func, INT_VAR_ARG, INT_VAR_ARG)
-Method("put", put_func, VAR_ARG, Argument(str))
+Method("put", put_func, VAR_ARG, STR_ARG)
+Method("posx", get_pos_x)
+Method("posy", get_pos_y)
+Method("eq", equals, VAR_ARG, VAR_ARG)
+Method("sm", smaller, INT_VAR_ARG, INT_VAR_ARG)
+Method("gr", greater, INT_VAR_ARG, INT_VAR_ARG)
+Method("sme", smaller_equals, INT_VAR_ARG, INT_VAR_ARG)
+Method("gre", greater_equals, INT_VAR_ARG, INT_VAR_ARG)
+Method("add", add, INT_VAR_ARG, STR_ARG)
+Method("sub", sub, INT_VAR_ARG, STR_ARG)
+Method("div", div, INT_VAR_ARG, STR_ARG)
+Method("mul", mul, INT_VAR_ARG, STR_ARG)
+Method("and", andd, INT_VAR_ARG, INT_VAR_ARG)
+Method("not", nott, INT_VAR_ARG)
+Method("or", orr, INT_VAR_ARG, INT_VAR_ARG)
 
 class CodeProcessor:
     def __init__(self):
         self._code_lines = []
         self.index = 0
-        self.last_call = time.time() - process_delay
+        self.next_call = time.time()
         self.logger = logging.getLogger(__name__)
 
         self.registers = {}
@@ -107,12 +196,15 @@ class CodeProcessor:
             
     def set_index(self, idx):
         self.index = idx
+
+    def set_delay(self, seconds):
+        self.next_call = time.time() + seconds
             
     def process_next_line(self):
-        if len(self._code_lines) > self.index and self.last_call + process_delay <= time.time():
+        if len(self._code_lines) > self.index and self.next_call <= time.time():
             self.process(self._code_lines[self.index][0], self._code_lines[self.index][1])
             self.index += 1
-            self.last_call += process_delay
+            # self.last_call += process_delay
         elif len(self._code_lines) <= self.index:
             global active_processor
             active_processor = None
@@ -123,24 +215,10 @@ class CodeProcessor:
         if not op in registered_methods:
             self.logger.warning(f"{self.index} Invalid operation {op}.")
         try:
-            registered_methods[op].call(self, args)
+            ret = registered_methods[op].call(self, args)
+            self.registers[return_value_register] = ret
         except CodeException as e:
             self.logger.warning(e)
-        #     case 'put':
-        #         if len(args) != 2:
-        #             self.logger.warning(self.index, "put prend deux arguments (valeur, destination)")
-        #             return False
-        #         if not args[0].isdigit():
-        #             self.logger.warning(self.index, "seul les nombres sont acceptés dans les registers")
-        #             return False
-        #         if not bool(register_match.fullmatch(args[1])):
-        #             self.logger.warning(self.index, "le nom du register est invalide")
-        #
-        #         self.registers[args[1]] = int(args[0])
-        #         print(self.registers)
-        #     case _:
-        #         self.logger.log(self.index, f"c quoi ca??? :  '{op}'")
-        #         return False
 
         return True
             

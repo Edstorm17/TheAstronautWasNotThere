@@ -55,6 +55,11 @@ class Vec2:
         yield self.y
     def __eq__(self, other : Vec2):
         return self.x == other.x and self.y == other.y
+    def __mod__(self, other):
+        return Vec2(self.x % other, self.y % other)
+    def __rmod__(self, other):
+        self.x %= other
+        self.y %= other
     def min(self, other : float) -> Vec2:
         return Vec2(min(self.x, other), min(self.y, other))
     def max(self, other : float) -> Vec2:

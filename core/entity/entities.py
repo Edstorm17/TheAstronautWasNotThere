@@ -16,12 +16,16 @@ class Entity(GameObject):
             for_render.append(self)
 
     def move(self, displacement: Vec2):
-        self.pos = (self.pos+displacement).max(0).min(config.map_size-1)
+        self.pos = (self.pos+displacement) % config.map_size
+        if self.pos.x < 0:
+            self.pos.x += config.map_size
+        elif self.pos.y < 0:
+            self.pos .y += config.map_size
+
+
     def delete(self):
         if self in for_render:
             for_render.remove(self)
-
-
 
 
 class Ship(Entity):

@@ -6,7 +6,7 @@ import input
 import renderer
 from ui import gui
 from core.item import items
-import code_processor
+from core import code_processor
 
 pygame.init()
 pygame.display.set_caption(config.TITLE)
