@@ -3,8 +3,7 @@ import time
 from typing import Callable, Any
 
 from core.entity import entities
-from core.games.game1 import map as rocks
-from core.item import items
+from core.games import game1
 import re
 global colors
 from ui.colors import Colors
@@ -76,9 +75,7 @@ def move_func(ctx, direction: str, steps: int):
             ctx.index -= 1
 
 def harv_func(ctx):
-    if entities.SHIP.get_pos() in rocks:
-        rocks.pop(entities.SHIP.get_pos()).delete()
-        items.argon.increment()
+    game1.harvest()
 
 def jump_func(ctx, target: int, condition: int):
     if condition:
@@ -86,7 +83,7 @@ def jump_func(ctx, target: int, condition: int):
 
 def put_func(ctx, value: str | int, register: str):
     if not register_match.fullmatch(register):
-        raise CodeException(f"Invalid register {register}.")
+        raise CodeException(f"InvaFixlid register {register}.")
 
     ctx.registers[register] = value
     print(ctx.registers)

@@ -2,9 +2,9 @@ import random
 
 from core.games.map import Map
 
-from core.entity.entities import Argon, SHIP
+from core.entity.entities import Argon, SHIP, Entity
 from core.math_utils import Vec2
-from item.items import items
+from core.item import items
 
 seed = random.randint(32456234756427656,243764256782436724376)
 map = Map(Vec2())
@@ -20,18 +20,18 @@ def new_level(world_size):
             if random.randint(0, 1):
                 map.grid[i][j] = Argon(Vec2(j, i))
 
-def harvest(items):
+def harvest():
     player_pos = SHIP.get_pos().to_int()
     if map.grid[player_pos.y][player_pos.x]:
         item = map.grid[player_pos.y][player_pos.x]
         map.grid[player_pos.y][player_pos.x] = None
         item.delete()
-        items['argon'].increment()
+        items.argon.increment()
         for entity in map:
             if isinstance(entity, Entity):
                 return True
         print("you win")
-        g = image.load('assets/world_assets/press.png')
+        # g = image.load('assets/world_assets/press.png')
         #win(g)
         return True
     else:
