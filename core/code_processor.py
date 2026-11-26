@@ -44,7 +44,7 @@ class Method:
         self.arg_types = arg_types
         self.delay = delay
         registered_methods[name] = self
-        Colors("add",fr"\W*({self.name})\W*","#FFA500")
+        Colors("add",fr"\b({self.name})\b","#FFA500")
 
     def call(self, ctx: CodeProcessor, args: list[str]):
         if len(args) != len(self.arg_types):

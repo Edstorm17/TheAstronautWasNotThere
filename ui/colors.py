@@ -9,7 +9,7 @@ class Colors:
         - fetch ( return the values of the colors dict
         """
     global colors
-    def __init__(self, mod: str = "", values: str | re.Pattern | int = "", key: str = ""):
+    def __init__(self, mod: str = "", values: str | re | int = "", key: str = ""):
         self.mod: str = mod
         if type(values) == int:
             self.index: int = int(values)
@@ -60,5 +60,5 @@ class Colors:
 colors = {
     "#00FFFF": [r'(-?\d+)'],
     "#FFA500": [],
-    "#00FF00": [r'\W*(up)\W*',r"\W*(down)\W*",r"\W*(left)\W*",r"\W*(right)\W*"],
+    "#00FF00": [r'\b(up)\b',r"\b(down)\b",r"\b(left)\b",r"\b(right)\b"],
 }
