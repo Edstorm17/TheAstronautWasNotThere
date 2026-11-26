@@ -1,12 +1,12 @@
 from __future__ import annotations
 class Vec2:
-    def __init__(self, x: int = 0, y: int = 0):
+    def __init__(self, x: float = 0, y: float = 0):
         if isinstance(x, tuple):
             self.x = x[0]
             self.y = x[1]
         self.x = x
         self.y = y
-    def __add__(self, other: Vec2 | float) -> Vec2:
+    def __add__(self, other: Vec2 | float | tuple) -> Vec2:
         """ addition de deux vecteurs """
         if isinstance(other, Vec2):
             return Vec2(self.x + other.x, self.y + other.y)
